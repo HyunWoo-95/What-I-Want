@@ -1,41 +1,38 @@
 package com.dev.wistlist_app;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WhisList {
-
+public class UserProfile {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@JoinColumn(name = "user_id")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
 	private User user;
 
-	private String title;
+	@Enumerated(value = EnumType.STRING)
+	private Interest interest;
 
-	private LocalDateTime created_at;
-
-	private LocalDateTime updated_at;
-
-	private WhisList(User user, String title) {
+	// 변수의 수는 적으나 확장의 가능성이 존재하여 Builder 패턴 이용
+	@Builder
+	public UserProfile(User user, Interest interest) {
 		this.user = user;
-		this.title = title;
-		this.created_at = LocalDateTime.now();
-		this.updated_at = LocalDateTime.now();
+		this.interest = interest;
 	}
 }
