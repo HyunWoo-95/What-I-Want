@@ -26,13 +26,15 @@ public class UserProfile {
 	@OneToOne(fetch = FetchType.LAZY)
 	private User user;
 
-	@Enumerated(value = EnumType.STRING)
-	private Interest interest;
+	private String nickname;
+
+	private String interest;
 
 	// 변수의 수는 적으나 확장의 가능성이 존재하여 Builder 패턴 이용
 	@Builder
-	public UserProfile(User user, Interest interest) {
+	public UserProfile(User user, String nickname, String interest) {
 		this.user = user;
+		this.nickname = nickname;
 		this.interest = interest;
 	}
 }
