@@ -2,11 +2,10 @@ package com.dev.wistlist_app;
 
 import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.Id;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,12 +28,9 @@ public class User {
 
 	private String password;
 
-	private String userNumber;
-
 	private LocalDateTime createdAt;
 
 	private LocalDateTime updatedAt;
-
 
 	@Builder
 	public User(String username, String email, String password) {
