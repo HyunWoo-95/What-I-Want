@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
 	private final UserRepository userRepo;
 	private final UserProfileRepository userProfileRepo;
-	private final HttpSession httpSession;
+
 
 	@Transactional
 	public void join(JoinRequest req) {
@@ -31,17 +31,5 @@ public class UserService {
 			.username(req.getUsername())
 			.build();
 		userRepo.save(user);
-	}
-
-	@Transactional
-	public void login(UserRequestDto.LoginRequest req) {
-		if (!userRepo.existsByEmail(req.getEmail())) {
-			throw new IllegalArgumentException("존재하지 않는 사용자 번호 입니다.");
-		}
-		if (!userRepo.existsByPassword(req.getPassword())) {
-			throw new IllegalArgumentException("패스워드가 일치하지 않습니다.");
-		}
-		User user = userRepo.findByEmailAndPassword(req.getEmail(), req.getPassword());
-		httpSession.setAttribute(LOGIN_USER, user.getId());
 	}
 }
