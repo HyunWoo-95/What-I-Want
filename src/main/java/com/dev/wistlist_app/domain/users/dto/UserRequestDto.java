@@ -1,4 +1,4 @@
-package com.dev.wistlist_app;
+package com.dev.wistlist_app.domain.users.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

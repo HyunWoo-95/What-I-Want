@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dev.wistlist_app.UserRequestDto.JoinRequest;
-import com.dev.wistlist_app.UserRequestDto.LoginRequest;
+import com.dev.wistlist_app.domain.users.dto.UserRequestDto.JoinRequest;
+import com.dev.wistlist_app.domain.users.dto.UserRequestDto.LoginRequest;
 import com.dev.wistlist_app.domain.users.service.UserService;
 import com.dev.wistlist_app.domain.users.service.SessionLoginService;
 
