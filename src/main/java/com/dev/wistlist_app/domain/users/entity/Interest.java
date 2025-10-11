@@ -1,4 +1,4 @@
-package com.dev.wistlist_app;
+package com.dev.wistlist_app.domain.users.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
