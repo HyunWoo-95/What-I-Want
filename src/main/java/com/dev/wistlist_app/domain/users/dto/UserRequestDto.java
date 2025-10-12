@@ -1,5 +1,7 @@
 package com.dev.wistlist_app.domain.users.dto;
 
+import com.dev.wistlist_app.domain.users.entity.Interest;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -33,5 +35,15 @@ public class UserRequestDto {
 		@NotBlank(message = "비밀번호를 입력해주세요")
 		@Pattern(regexp = "^[a-z0-9]{8,20}$", message = "소문자와 숫자(0~9)를 포함하여 8 ~ 20자의 문자열을 입력해주세요")
 		private String password;
+	}
+
+	@Getter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class ProfileRequest {
+		@NotBlank(message = "nickname를 작성해주세요")
+		@Pattern(regexp = "^[a-zA-Z가-힣]{2,10}$", message = "2 ~ 10자 범위의 소문자 또는 대문자, 한글로 작성해주세요")
+		private String nickname;
+		private Interest interest;
 	}
 }

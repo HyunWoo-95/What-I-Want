@@ -20,7 +20,7 @@ public class SecurityConfig {
 			// 2. 인증 및 인가 규칙 설정
 			.authorizeHttpRequests(auth -> auth
 				// 로그인 API 엔드포인트는 인증 없이 접근 허용
-				.requestMatchers("/users/join","/users/login").permitAll()
+				.requestMatchers("/users/join", "/users/login").permitAll()
 				// 기타 모든 요청은 인증 필요
 				.anyRequest().authenticated()
 			)
@@ -33,8 +33,9 @@ public class SecurityConfig {
 			.httpBasic(httpBasic -> httpBasic.disable());
 		return http.build();
 	}
-		@Bean
-		public BCryptPasswordEncoder encodePassword () {
-			return new BCryptPasswordEncoder();
-		}
+
+	@Bean
+	public BCryptPasswordEncoder encodePassword() {
+		return new BCryptPasswordEncoder();
 	}
+}
