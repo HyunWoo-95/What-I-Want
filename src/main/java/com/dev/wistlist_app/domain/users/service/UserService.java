@@ -43,7 +43,8 @@ public class UserService {
 		UserProfile profile = profileRepo.findByUser(user);
 		return new ProfileRespone(
 			profile.getNickname(),
-			profile.getInterest()
+			profile.getInterest(),
+			profile.getCreatedAt()
 		);
 	}
 

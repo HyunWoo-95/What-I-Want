@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.dev.wistlist_app.domain.BaseTimeEntity;
 import com.dev.wistlist_app.domain.users.entity.User;
 
 import jakarta.persistence.Entity;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WishList {
+public class WishList extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,16 +40,10 @@ public class WishList {
 	@OneToMany(mappedBy = "wishList", fetch = FetchType.LAZY)
 	private Set<Wish> wishes = new HashSet<>();
 
-	private LocalDateTime createdAt;
-
-	private LocalDateTime updatedAt;
-
 	@Builder
 	public WishList(User user, String title, LocalDateTime dueDate) {
 		this.user = user;
 		this.title = title;
 		this.dueDate = dueDate;
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = LocalDateTime.now();
 	}
 }

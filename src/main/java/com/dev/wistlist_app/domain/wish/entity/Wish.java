@@ -2,6 +2,8 @@ package com.dev.wistlist_app.domain.wish.entity;
 
 import java.time.LocalDateTime;
 
+import com.dev.wistlist_app.domain.BaseTimeEntity;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Wish {
+public class Wish extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,16 +36,10 @@ public class Wish {
 	@Enumerated(value = EnumType.STRING)
 	private WishStatus status;
 
-	private LocalDateTime createdAt;
-
-	private LocalDateTime updatedAt;
-
 	@Builder
 	public Wish(WishList wishList, String content, WishStatus status) {
 		this.wishList = wishList;
 		this.content = content;
 		this.status = WishStatus.OPEN;
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = LocalDateTime.now();
 	}
 }

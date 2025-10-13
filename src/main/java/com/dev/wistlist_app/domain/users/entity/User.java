@@ -2,6 +2,8 @@ package com.dev.wistlist_app.domain.users.entity;
 
 import java.time.LocalDateTime;
 
+import com.dev.wistlist_app.domain.BaseTimeEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,17 +30,11 @@ public class User {
 	private String email;
 	@Column(nullable = false)
 	private String password;
-	@Column(nullable = false)
-	private LocalDateTime createdAt;
-	@Column(nullable = false)
-	private LocalDateTime updatedAt;
 
 	@Builder
 	public User(String username, String email, String password) {
 		this.username = username;
 		this.email = email;
 		this.password = password;
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = LocalDateTime.now();
 	}
 }

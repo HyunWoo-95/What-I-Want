@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dev.wistlist_app.domain.users.dto.UserRequestDto.LoginRequest;
 import com.dev.wistlist_app.domain.users.entity.User;
 import com.dev.wistlist_app.domain.users.repository.UserRepository;
+import com.dev.wistlist_app.global.constant.SessionConst;
 import com.dev.wistlist_app.global.encrytion.SHA256EncryptionService;
 
 import jakarta.servlet.http.HttpSession;
@@ -32,5 +33,11 @@ public class SessionLoginService {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		}
 		httpSession.setAttribute(LOGIN_USER, user.getId());
+
+	}
+
+	public Long getLoginUser() {
+		log.info(String.valueOf(httpSession.getAttribute(SessionConst.LOGIN_USER)));
+		return (Long)httpSession.getAttribute(LOGIN_USER);
 	}
 }

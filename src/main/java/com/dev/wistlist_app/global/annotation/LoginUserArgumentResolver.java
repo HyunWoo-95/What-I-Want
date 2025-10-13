@@ -8,21 +8,23 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import com.dev.wistlist_app.global.constant.SessionConst;
+import com.dev.wistlist_app.domain.users.service.SessionLoginService;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
+	private final SessionLoginService loginService;
+
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
 
 		log.info("support parameter 실행");
 
-		boolean hasLoginAnnotation = parameter.hasMethodAnnotation(Login.class);
+		boolean hasLoginAnnotation = parameter.hasParameterAnnotation(Login.class);
 		boolean hasLongType = Long.class.isAssignableFrom(parameter.getParameterType());
 
 		return hasLoginAnnotation && hasLongType;
@@ -34,12 +36,6 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 
 		log.info("ArgumentResolver 실행");
 
-		HttpServletRequest request = (HttpServletRequest)webRequest.getNativeRequest();
-		HttpSession session = request.getSession(false);
-
-		if (session == null) {
-			return null;
-		}
-		return session.getAttribute(SessionConst.LOGIN_USER);
+		return loginService.getLoginUser();
 	}
 }
