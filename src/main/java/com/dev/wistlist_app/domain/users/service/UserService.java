@@ -1,17 +1,18 @@
 package com.dev.wistlist_app.domain.users.service;
 
-import static com.dev.wistlist_app.global.constant.SessionConst.*;
+import static com.dev.wistlist_app.domain.users.dto.UserRequestDto.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dev.wistlist_app.domain.users.dto.UserResponseDto.ProfileRespone;
+import com.dev.wistlist_app.domain.users.entity.UserProfile;
 import com.dev.wistlist_app.domain.users.repository.UserProfileRepository;
 import com.dev.wistlist_app.domain.users.repository.UserRepository;
-import com.dev.wistlist_app.UserRequestDto;
-import com.dev.wistlist_app.UserRequestDto.JoinRequest;
+import com.dev.wistlist_app.domain.users.dto.UserRequestDto.JoinRequest;
 import com.dev.wistlist_app.domain.users.entity.User;
+import com.dev.wistlist_app.global.encrytion.SHA256EncryptionService;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,28 +21,41 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class UserService {
 	private final UserRepository userRepo;
-	private final UserProfileRepository userProfileRepo;
-	private final HttpSession httpSession;
+	private final UserProfileRepository profileRepo;
+	private final SHA256EncryptionService encoder;
 
 	@Transactional
 	public void join(JoinRequest req) {
 		User user = User.builder()
 			.email(req.getEmail())
-			.password(req.getPassword())
+			.password(encoder.encode(req.getPassword()))
 			.username(req.getUsername())
 			.build();
+		log.info("암호화 비밀번호 : " + encoder.encode(req.getPassword()));
 		userRepo.save(user);
 	}
 
+	@Transactional(readOnly = true)
+	public ProfileRespone getProfile(Long userId) {
+		User user = userRepo.findById(userId).orElseThrow(
+			() -> new IllegalArgumentException("일치하는 회원이 없습니다."));
+
+		UserProfile profile = profileRepo.findByUser(user);
+		return new ProfileRespone(
+			profile.getNickname(),
+			profile.getInterest(),
+			profile.getCreatedAt()
+		);
+	}
+
 	@Transactional
-	public void login(UserRequestDto.LoginRequest req) {
-		if (!userRepo.existsByEmail(req.getEmail())) {
-			throw new IllegalArgumentException("존재하지 않는 사용자 번호 입니다.");
-		}
-		if (!userRepo.existsByPassword(req.getPassword())) {
-			throw new IllegalArgumentException("패스워드가 일치하지 않습니다.");
-		}
-		User user = userRepo.findByEmailAndPassword(req.getEmail(), req.getPassword());
-		httpSession.setAttribute(LOGIN_USER, user.getId());
+	public void saveProfile(Long userId, ProfileRequest req) {
+		User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("일치하는 회원이 없습니다."));
+		UserProfile profile = UserProfile.builder()
+			.user(user)
+			.nickname(req.getNickname())
+			.interest(req.getInterest().getName())
+			.build();
+		profileRepo.save(profile);
 	}
 }
