@@ -2,17 +2,16 @@ package com.dev.wistlist_app.domain.users.service;
 
 import static com.dev.wistlist_app.domain.users.dto.UserRequestDto.*;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dev.wistlist_app.domain.users.dto.UserResponseDto;
 import com.dev.wistlist_app.domain.users.dto.UserResponseDto.ProfileRespone;
 import com.dev.wistlist_app.domain.users.entity.UserProfile;
 import com.dev.wistlist_app.domain.users.repository.UserProfileRepository;
 import com.dev.wistlist_app.domain.users.repository.UserRepository;
 import com.dev.wistlist_app.domain.users.dto.UserRequestDto.JoinRequest;
 import com.dev.wistlist_app.domain.users.entity.User;
+import com.dev.wistlist_app.global.encrytion.SHA256EncryptionService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
 	private final UserRepository userRepo;
 	private final UserProfileRepository profileRepo;
-	private final BCryptPasswordEncoder encoder;
+	private final SHA256EncryptionService encoder;
 
 	@Transactional
 	public void join(JoinRequest req) {
