@@ -3,6 +3,7 @@ package com.dev.wistlist_app.domain.wish.entity;
 import java.time.LocalDateTime;
 
 import com.dev.wistlist_app.domain.BaseTimeEntity;
+import com.dev.wistlist_app.domain.users.entity.User;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -26,6 +27,9 @@ public class Wish extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	@JoinColumn(name = "user_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private User user;
 
 	@JoinColumn(name = "list_id")
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -37,7 +41,8 @@ public class Wish extends BaseTimeEntity {
 	private WishStatus status;
 
 	@Builder
-	public Wish(WishList wishList, String content, WishStatus status) {
+	public Wish(User user, WishList wishList, String content, WishStatus status) {
+		this.user = user;
 		this.wishList = wishList;
 		this.content = content;
 		this.status = WishStatus.OPEN;
