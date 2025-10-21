@@ -1,7 +1,5 @@
 package com.dev.wistlist_app.domain.wish.entity;
 
-import java.time.LocalDateTime;
-
 import com.dev.wistlist_app.domain.BaseTimeEntity;
 import com.dev.wistlist_app.domain.users.entity.User;
 
@@ -41,10 +39,18 @@ public class Wish extends BaseTimeEntity {
 	private WishStatus status;
 
 	@Builder
-	public Wish(User user, WishList wishList, String content, WishStatus status) {
+	public Wish(User user, WishList wishList, String content) {
 		this.user = user;
 		this.wishList = wishList;
 		this.content = content;
 		this.status = WishStatus.OPEN;
+	}
+
+	public void updateWish(String content) {
+		this.content = content;
+	}
+
+	public void updateWishStatus(WishStatus status) {
+		this.status = status;
 	}
 }

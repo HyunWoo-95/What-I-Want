@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum WishStatus {
+
 	DONE("성공"),
 	IN_PROGRESS("진행중"),
 	OPEN("대기"),
