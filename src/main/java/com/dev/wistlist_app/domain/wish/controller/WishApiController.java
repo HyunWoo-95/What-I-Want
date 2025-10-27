@@ -2,6 +2,7 @@ package com.dev.wistlist_app.domain.wish.controller;
 
 import static com.dev.wistlist_app.domain.wish.dto.WishRequestDto.*;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,11 @@ import lombok.RequiredArgsConstructor;
 public class WishApiController {
 
 	private final WishService wishService;
+
+	@GetMapping
+	public void getMyWishList(@Login Long userId){
+
+	}
 
 	@PostMapping
 	public void createWishList(@Login Long userId, @RequestBody @Valid WishListRequest request) {
