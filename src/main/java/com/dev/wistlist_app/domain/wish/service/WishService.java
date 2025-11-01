@@ -1,5 +1,8 @@
 package com.dev.wistlist_app.domain.wish.service;
 
+import static com.dev.wistlist_app.domain.wish.dto.WishResponseDto.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -7,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dev.wistlist_app.domain.users.entity.User;
 import com.dev.wistlist_app.domain.users.repository.UserRepository;
-import com.dev.wistlist_app.domain.wish.dto.WishRequestDto;
 import com.dev.wistlist_app.domain.wish.dto.WishRequestDto.WishListRequest;
 import com.dev.wistlist_app.domain.wish.dto.WishRequestDto.WishRequest;
 import com.dev.wistlist_app.domain.wish.dto.WishRequestDto.WishStatusRequest;
@@ -26,18 +28,30 @@ public class WishService {
 	private final UserRepository userRepo;
 
 	@Transactional(readOnly = true)
-	public void getMyWishList(Long userId) {
+	public List<WishListResponse> getMyWishList(Long userId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 입니다."));
 
 		List<WishList> wishLists = wishListRepo.findAllByUser(user);
+		List<WishListResponse> res = new ArrayList<>();
+		for (WishList wishList : wishLists) {
+			res.add(
+				WishListResponse.builder()
+					.listId(wishList.getId())
+					.userId(user.getId())
+					.title(wishList.getTitle())
+					.dueDate(wishList.getDueDate())
+					.build()
+			);
+		}
+		return res;
 	}
 
 	@Transactional(readOnly = true)
-	public void getMyWishes(Long userId, Long listId) {
+	public List<WishResponse> getMyWishes(Long userId, Long listId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 입니다."));
 
 		WishList wishList = wishListRepo.findByIdAndUser(listId, user);
-		if (wishList == null){
+		if (wishList == null) {
 			throw new IllegalArgumentException("위시 리스트가 존재하지 않습니다.");
 		}
 
@@ -45,22 +59,36 @@ public class WishService {
 		if (wishes.isEmpty()) {
 			throw new IllegalArgumentException("위시를 작성해주세요.");
 		}
+		List<WishResponse> res = new ArrayList<>();
+		for (Wish wish : wishes) {
+			res.add(WishResponse.builder()
+				.wishId(wish.getId())
+				.content(wish.getContent())
+				.createdAt(wish.getCreatedAt())
+				.build());
+		}
+		return res;
 	}
 
 	@Transactional(readOnly = true)
-	public void getMyWish(Long userId, Long listId, Long wishId){
+	public WishResponse getMyWish(Long userId, Long listId, Long wishId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 입니다."));
 
 		WishList wishList = wishListRepo.findByIdAndUser(listId, user);
-		if (wishList == null){
+		if (wishList == null) {
 			throw new IllegalArgumentException("위시 리스트가 존재하지 않습니다.");
 		}
 
 		Wish wish = wishRepo.findByIdAndWishList(wishId, wishList);
-		if (wish == null){
+		if (wish == null) {
 			throw new IllegalArgumentException("위시가 존재하지 않습니다.");
 		}
-
+		return WishResponse.builder()
+			.content(wish.getContent())
+			.status(wish.getStatus())
+			.createdAt(wish.getCreatedAt())
+			.updatedAt(wish.getUpdatedAt())
+			.build();
 	}
 
 	@Transactional
@@ -118,6 +146,21 @@ public class WishService {
 
 		Wish wish = wishRepo.findById(wishId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 위시 입니다."));
 		wish.updateWishStatus(request.getStatus());
+	}
 
+	@Transactional
+	public void deleteMyWish(Long userId, Long listId, Long wishId) {
+		User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 입니다."));
+
+		WishList wishList = wishListRepo.findByIdAndUser(listId, user);
+		if (wishList == null) {
+			throw new IllegalArgumentException("위시 리스트가 존재하지 않습니다.");
+		}
+
+		Wish wish = wishRepo.findByIdAndWishList(wishId, wishList);
+		if (wish == null) {
+			throw new IllegalArgumentException("위시가 존재하지 않습니다.");
+		}
+		wishRepo.deleteById(wishId);
 	}
 }
