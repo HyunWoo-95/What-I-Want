@@ -1,7 +1,9 @@
 package com.dev.wistlist_app.domain.wish.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.dev.wistlist_app.domain.BaseTimeEntity;
@@ -38,7 +40,7 @@ public class WishList extends BaseTimeEntity {
 	private LocalDateTime dueDate;
 
 	@OneToMany(mappedBy = "wishList", fetch = FetchType.LAZY)
-	private Set<Wish> wishes = new HashSet<>();
+	private List<Wish> wishes = new ArrayList<>();
 
 	@Builder
 	public WishList(User user, String title, LocalDateTime dueDate) {
