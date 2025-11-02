@@ -12,6 +12,8 @@ import com.dev.wistlist_app.domain.users.repository.UserRepository;
 import com.dev.wistlist_app.domain.users.dto.UserRequestDto.JoinRequest;
 import com.dev.wistlist_app.domain.users.entity.User;
 import com.dev.wistlist_app.global.encrytion.SHA256EncryptionService;
+import com.dev.wistlist_app.global.exception.ErrorCode;
+import com.dev.wistlist_app.global.exception.GlobalException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +40,7 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public ProfileRespone getProfile(Long userId) {
 		User user = userRepo.findById(userId).orElseThrow(
-			() -> new IllegalArgumentException("일치하는 회원이 없습니다."));
+			() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		UserProfile profile = profileRepo.findByUser(user);
 		return new ProfileRespone(

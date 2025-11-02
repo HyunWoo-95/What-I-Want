@@ -10,6 +10,8 @@ import com.dev.wistlist_app.domain.users.entity.User;
 import com.dev.wistlist_app.domain.users.repository.UserRepository;
 import com.dev.wistlist_app.global.constant.SessionConst;
 import com.dev.wistlist_app.global.encrytion.SHA256EncryptionService;
+import com.dev.wistlist_app.global.exception.ErrorCode;
+import com.dev.wistlist_app.global.exception.GlobalException;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +29,10 @@ public class SessionLoginService {
 	@Transactional
 	public void login(LoginRequest req) {
 		User user = userRepo.findByEmail(req.getEmail())
-			.orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+			.orElseThrow(() -> new GlobalException(ErrorCode.EMAIL_NOT_FOUND));
 		String encode = encoder.encode(req.getPassword());
 		if (!encode.equals(user.getPassword())) {
-			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+			throw new GlobalException(ErrorCode.PASSWORD_MISS_MATCH);
 		}
 		httpSession.setAttribute(LOGIN_USER, user.getId());
 
