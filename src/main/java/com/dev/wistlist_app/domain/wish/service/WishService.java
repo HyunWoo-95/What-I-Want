@@ -17,6 +17,8 @@ import com.dev.wistlist_app.domain.wish.entity.Wish;
 import com.dev.wistlist_app.domain.wish.entity.WishList;
 import com.dev.wistlist_app.domain.wish.repository.WishListRepository;
 import com.dev.wistlist_app.domain.wish.repository.WishRepository;
+import com.dev.wistlist_app.global.exception.ErrorCode;
+import com.dev.wistlist_app.global.exception.GlobalException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +31,7 @@ public class WishService {
 
 	@Transactional(readOnly = true)
 	public List<WishListResponse> getMyWishList(Long userId) {
-		User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 입니다."));
+		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		List<WishList> wishLists = wishListRepo.findAllByUser(user);
 		List<WishListResponse> res = new ArrayList<>();
@@ -48,16 +50,16 @@ public class WishService {
 
 	@Transactional(readOnly = true)
 	public List<WishResponse> getMyWishes(Long userId, Long listId) {
-		User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 입니다."));
+		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		WishList wishList = wishListRepo.findByIdAndUser(listId, user);
 		if (wishList == null) {
-			throw new IllegalArgumentException("위시 리스트가 존재하지 않습니다.");
+			throw new GlobalException(ErrorCode.WISHLIST_NOT_FOUND);
 		}
 
 		List<Wish> wishes = wishList.getWishes();
 		if (wishes.isEmpty()) {
-			throw new IllegalArgumentException("위시를 작성해주세요.");
+			throw new GlobalException(ErrorCode.WISH_NOT_FOUND);
 		}
 		List<WishResponse> res = new ArrayList<>();
 		for (Wish wish : wishes) {
@@ -72,16 +74,16 @@ public class WishService {
 
 	@Transactional(readOnly = true)
 	public WishResponse getMyWish(Long userId, Long listId, Long wishId) {
-		User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 입니다."));
+		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		WishList wishList = wishListRepo.findByIdAndUser(listId, user);
 		if (wishList == null) {
-			throw new IllegalArgumentException("위시 리스트가 존재하지 않습니다.");
+			throw new GlobalException(ErrorCode.WISHLIST_NOT_FOUND);
 		}
 
 		Wish wish = wishRepo.findByIdAndWishList(wishId, wishList);
 		if (wish == null) {
-			throw new IllegalArgumentException("위시가 존재하지 않습니다.");
+			throw new GlobalException(ErrorCode.WISH_NOT_FOUND);
 		}
 		return WishResponse.builder()
 			.content(wish.getContent())
@@ -93,7 +95,7 @@ public class WishService {
 
 	@Transactional
 	public void createWishList(Long userId, WishListRequest request) {
-		User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 입니다."));
+		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		WishList wishes = WishList.builder()
 			.user(user)
@@ -105,12 +107,12 @@ public class WishService {
 
 	@Transactional
 	public void createWish(Long userId, Long listId, WishRequest request) {
-		User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 입니다."));
+		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		WishList wishList = wishListRepo.findById(listId)
-			.orElseThrow(() -> new IllegalArgumentException("위시리스트가 존재하지 않습니다."));
+			.orElseThrow(() -> new GlobalException(ErrorCode.WISHLIST_NOT_FOUND));
 		if (!wishList.getUser().equals(user)) {
-			throw new IllegalArgumentException("자신의 위시리스트에만 위시를 작성할 수 있습니다.");
+			throw new GlobalException(ErrorCode.UNAUTHORIZED);
 		}
 
 		Wish wish = Wish.builder().user(user)
@@ -122,44 +124,44 @@ public class WishService {
 
 	@Transactional
 	public void updateWish(Long userId, Long listId, Long wishId, WishRequest request) {
-		User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 입니다."));
+		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		WishList wishList = wishListRepo.findById(listId)
-			.orElseThrow(() -> new IllegalArgumentException("위시리스트가 존재하지 않습니다."));
+			.orElseThrow(() -> new GlobalException(ErrorCode.WISHLIST_NOT_FOUND));
 		if (!wishList.getUser().equals(user)) {
-			throw new IllegalArgumentException("자신의 위시리스트에만 위시를 작성할 수 있습니다.");
+			throw new GlobalException(ErrorCode.UNAUTHORIZED);
 		}
 
-		Wish wish = wishRepo.findById(wishId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 위시 입니다."));
+		Wish wish = wishRepo.findById(wishId).orElseThrow(() -> new GlobalException(ErrorCode.WISH_NOT_FOUND));
 		wish.updateWish(request.getContent());
 	}
 
 	@Transactional
 	public void updateWishStatus(Long userId, Long listId, Long wishId, WishStatusRequest request) {
-		User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 입니다."));
+		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		WishList wishList = wishListRepo.findById(listId)
-			.orElseThrow(() -> new IllegalArgumentException("위시리스트가 존재하지 않습니다."));
+			.orElseThrow(() -> new GlobalException(ErrorCode.WISHLIST_NOT_FOUND));
 		if (!wishList.getUser().equals(user)) {
-			throw new IllegalArgumentException("자신의 위시리스트에만 위시를 작성할 수 있습니다.");
+			throw new GlobalException(ErrorCode.UNAUTHORIZED);
 		}
 
-		Wish wish = wishRepo.findById(wishId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 위시 입니다."));
+		Wish wish = wishRepo.findById(wishId).orElseThrow(() -> new GlobalException(ErrorCode.WISH_NOT_FOUND));
 		wish.updateWishStatus(request.getStatus());
 	}
 
 	@Transactional
 	public void deleteMyWish(Long userId, Long listId, Long wishId) {
-		User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 입니다."));
+		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		WishList wishList = wishListRepo.findByIdAndUser(listId, user);
 		if (wishList == null) {
-			throw new IllegalArgumentException("위시 리스트가 존재하지 않습니다.");
+			throw new GlobalException(ErrorCode.WISHLIST_NOT_FOUND);
 		}
 
 		Wish wish = wishRepo.findByIdAndWishList(wishId, wishList);
 		if (wish == null) {
-			throw new IllegalArgumentException("위시가 존재하지 않습니다.");
+			throw new GlobalException(ErrorCode.WISH_NOT_FOUND);
 		}
 		wishRepo.deleteById(wishId);
 	}

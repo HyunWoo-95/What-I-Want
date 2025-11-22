@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dev.wistlist_app.domain.wish.dto.WishRequestDto.WishRequest;
 import com.dev.wistlist_app.domain.wish.dto.WishResponseDto;
 import com.dev.wistlist_app.domain.wish.dto.WishResponseDto.WishListResponse;
+import com.dev.wistlist_app.domain.wish.dto.WishResponseDto.WishResponse;
 import com.dev.wistlist_app.domain.wish.service.WishService;
 import com.dev.wistlist_app.global.annotation.Login;
+import com.dev.wistlist_app.global.response.ApiResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,19 +32,19 @@ public class WishApiController {
 	private final WishService wishService;
 
 	@GetMapping
-	public List<WishListResponse> getMyWishList(@Login Long userId) {
-		return wishService.getMyWishList(userId);
+	public ApiResponse<List<WishListResponse>> getMyWishList(@Login Long userId) {
+		return ApiResponse.success(wishService.getMyWishList(userId));
 	}
 
 	@GetMapping("/{id}")
-	public List<WishResponseDto.WishResponse> getMyWishes(@Login Long userId, @PathVariable(name = "id") Long listId) {
-		return wishService.getMyWishes(userId, listId);
+	public ApiResponse<List<WishResponse>> getMyWishes(@Login Long userId, @PathVariable(name = "id") Long listId) {
+		return ApiResponse.success(wishService.getMyWishes(userId, listId));
 	}
 
 	@GetMapping("/{id}/wishes/{wishId}")
-	public WishResponseDto.WishResponse getMyWish(@Login Long userId, @PathVariable(name = "id") Long listId,
+	public ApiResponse<WishResponse> getMyWish(@Login Long userId, @PathVariable(name = "id") Long listId,
 		@PathVariable Long wishId) {
-		return wishService.getMyWish(userId, listId, wishId);
+		return ApiResponse.success(wishService.getMyWish(userId, listId, wishId));
 	}
 
 	@PostMapping
@@ -69,8 +71,10 @@ public class WishApiController {
 		@RequestBody @Valid WishStatusRequest request) {
 		wishService.updateWishStatus(userId, listId, wishId, request);
 	}
+
 	@DeleteMapping("/{id}/wishes/{wishId}")
 	public void deleteMyWish(@Login Long userId, @PathVariable(name = "id") Long listId,
 		@PathVariable Long wishId) {
-		 wishService.deleteMyWish(userId, listId, wishId);
-	}}
+		wishService.deleteMyWish(userId, listId, wishId);
+	}
+}

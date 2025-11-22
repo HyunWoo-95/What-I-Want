@@ -1,5 +1,7 @@
 package com.dev.wistlist_app.domain.users.controller;
 
+import static com.dev.wistlist_app.domain.users.dto.UserResponseDto.*;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +16,7 @@ import com.dev.wistlist_app.domain.users.dto.UserResponseDto;
 import com.dev.wistlist_app.domain.users.service.UserService;
 import com.dev.wistlist_app.domain.users.service.SessionLoginService;
 import com.dev.wistlist_app.global.annotation.Login;
+import com.dev.wistlist_app.global.response.ApiResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +41,8 @@ public class UserApiController {
 	}
 
 	@GetMapping("/profile")
-	public UserResponseDto.ProfileRespone getProfile(@Login Long userId) {
-		return userService.getProfile(userId);
+	public ApiResponse<ProfileRespone> getProfile(@Login Long userId) {
+		return ApiResponse.success(userService.getProfile(userId));
 	}
 
 	@PostMapping("/profile")
