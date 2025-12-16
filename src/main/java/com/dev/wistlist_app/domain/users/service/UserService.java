@@ -45,6 +45,9 @@ public class UserService {
 			() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		UserProfile profile = profileRepo.findByUser(user);
+		if (profile == null){
+			throw new GlobalException(ErrorCode.PROFILE_NOT_EXIST);
+		}
 		return new ProfileRespone(
 			profile.getNickname(),
 			profile.getInterest(),
