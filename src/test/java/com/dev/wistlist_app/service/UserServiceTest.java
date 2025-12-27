@@ -22,7 +22,6 @@ import com.dev.wistlist_app.domain.users.service.UserService;
 import com.dev.wistlist_app.global.encrytion.EncryptPasswordEncoder;
 import com.dev.wistlist_app.global.exception.ErrorCode;
 import com.dev.wistlist_app.global.exception.GlobalException;
-
 @SpringBootTest
 public class UserServiceTest {
 
