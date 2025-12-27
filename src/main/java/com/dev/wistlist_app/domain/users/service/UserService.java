@@ -28,12 +28,14 @@ public class UserService {
 
 	@Transactional
 	public void join(JoinRequest req) {
+		if (userRepo.existsByEmail(req.getEmail())) {
+			throw new GlobalException(ErrorCode.DUPLICATED_EMAIL);
+		}
 		User user = User.builder()
 			.email(req.getEmail())
 			.password(encoder.encode(req.getPassword()))
 			.username(req.getUsername())
 			.build();
-		log.info("암호화 비밀번호 : " + encoder.encode(req.getPassword()));
 		userRepo.save(user);
 	}
 
@@ -43,6 +45,9 @@ public class UserService {
 			() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		UserProfile profile = profileRepo.findByUser(user);
+		if (profile == null){
+			throw new GlobalException(ErrorCode.PROFILE_NOT_EXIST);
+		}
 		return new ProfileRespone(
 			profile.getNickname(),
 			profile.getInterest(),

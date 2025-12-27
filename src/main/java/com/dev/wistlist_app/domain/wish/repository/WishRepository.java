@@ -10,4 +10,5 @@ import com.dev.wistlist_app.domain.wish.entity.WishList;
 public interface WishRepository extends JpaRepository<Wish, Long> {
 	Wish findByIdAndWishList(Long id, WishList list);
 
+
 }
