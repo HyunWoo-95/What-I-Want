@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.dev.wistlist_app.domain.bucket.service.BucketListService;
 import com.dev.wistlist_app.domain.users.dto.UserRequestDto.JoinRequest;
 import com.dev.wistlist_app.domain.users.entity.User;
 import com.dev.wistlist_app.domain.users.repository.UserRepository;
@@ -26,6 +27,8 @@ import com.dev.wistlist_app.global.encrytion.EncryptPasswordEncoder;
 @SpringBootTest
 public class BucketItemServiceTest {
 
+	@Autowired
+	private BucketListService bucketListService;
 	@Autowired
 	private BucketItemService bucketItemService;
 	@Autowired
@@ -49,7 +52,7 @@ public class BucketItemServiceTest {
 			.orElseThrow(() -> new AssertionFailure("존재하지 않는 사용자 입니다."));
 
 		BucketListCreateRequest req = new BucketListCreateRequest("2026 목표", LocalDateTime.now());
-		bucketItemService.createBucketList(joinedUser.getId(), req);
+		bucketListService.createBucketList(joinedUser.getId(), req);
 
 		assertThat(wishListRepo.findAll()).hasSize(1);
 	}
@@ -64,7 +67,7 @@ public class BucketItemServiceTest {
 			.orElseThrow(() -> new AssertionFailure("존재하지 않는 사용자 입니다."));
 
 		BucketListCreateRequest req = new BucketListCreateRequest("2026 목표", LocalDateTime.now());
-		bucketItemService.createBucketList(joinedUser.getId(), req);
+		bucketListService.createBucketList(joinedUser.getId(), req);
 		BucketList bucketList = wishListRepo.findAll().get(0);
 		// when : 위시 생성 정보
 		BucketItemCreateRequest wishReq = new BucketItemCreateRequest("여행가기");
@@ -83,7 +86,7 @@ public class BucketItemServiceTest {
 			.orElseThrow(() -> new AssertionFailure("존재하지 않는 사용자 입니다."));
 
 		BucketListCreateRequest req = new BucketListCreateRequest("2026 목표", LocalDateTime.now());
-		bucketItemService.createBucketList(joinedUser.getId(), req);
+		bucketListService.createBucketList(joinedUser.getId(), req);
 		BucketList bucketList = wishListRepo.findAll().getFirst();
 
 		BucketItemCreateRequest wishReq = new BucketItemCreateRequest("여행가기");
@@ -92,7 +95,7 @@ public class BucketItemServiceTest {
 		// when : 위시 수정 정보
 		BucketItem bucketItem = wishRepo.findByIdAndBucketList(1L, bucketList);
 		BucketItemCreateRequest updateReq =  new BucketItemCreateRequest("공부하기");
-		bucketItem.updateWish(updateReq.getContent());
+		bucketItem.updateBucketItem(updateReq.getContent());
 
 		assertThat(joinedUser.getId()).isEqualTo(bucketItem.getUser().getId());
 		assertThat(wishRepo.findAll()).hasSize(1);
@@ -111,7 +114,7 @@ public class BucketItemServiceTest {
 			.orElseThrow(() -> new AssertionFailure("존재하지 않는 사용자 입니다."));
 
 		BucketListCreateRequest req = new BucketListCreateRequest("2026 목표", LocalDateTime.now());
-		bucketItemService.createBucketList(joinedUser.getId(), req);
+		bucketListService.createBucketList(joinedUser.getId(), req);
 		BucketList bucketList = wishListRepo.findAll().getFirst();
 
 		BucketItemCreateRequest wishReq = new BucketItemCreateRequest("여행가기");

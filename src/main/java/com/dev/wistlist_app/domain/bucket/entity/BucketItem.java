@@ -46,7 +46,7 @@ public class BucketItem extends BaseTimeEntity {
 		this.status = BucketItemStatus.OPEN;
 	}
 
-	public void updateWish(String content) {
+	public void updateBucketItem(String content) {
 		this.content = content;
 	}
 
