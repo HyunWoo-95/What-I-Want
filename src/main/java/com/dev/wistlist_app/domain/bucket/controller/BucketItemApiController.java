@@ -29,49 +29,49 @@ public class BucketItemApiController {
 	private final BucketItemService bucketItemService;
 
 	@GetMapping
-	public ApiResponse<List<BucketListResponse>> getMyWishList(@Login Long userId) {
-		return ApiResponse.success(bucketItemService.getMyWishList(userId));
+	public ApiResponse<List<BucketListResponse>> getMyBucketList(@Login Long userId) {
+		return ApiResponse.success(bucketItemService.getMyBucketList(userId));
 	}
 
 	@GetMapping("/{id}")
-	public ApiResponse<List<BucketItemResponse>> getMyWishes(@Login Long userId, @PathVariable(name = "id") Long listId) {
-		return ApiResponse.success(bucketItemService.getMyWishes(userId, listId));
+	public ApiResponse<List<BucketItemResponse>> getMyBucketItems(@Login Long userId, @PathVariable(name = "id") Long listId) {
+		return ApiResponse.success(bucketItemService.getMyBucketItems(userId, listId));
 	}
 
-	@GetMapping("/{id}/wishes/{wishId}")
-	public ApiResponse<BucketItemResponse> getMyWish(@Login Long userId, @PathVariable(name = "id") Long listId,
-		@PathVariable Long wishId) {
-		return ApiResponse.success(bucketItemService.getMyWish(userId, listId, wishId));
+	@GetMapping("/{id}/wishes/{bucketId}")
+	public ApiResponse<BucketItemResponse> getMyBucketItem(@Login Long userId, @PathVariable(name = "id") Long listId,
+		@PathVariable Long bucketId) {
+		return ApiResponse.success(bucketItemService.getMyBucketItem(userId, listId, bucketId));
 	}
 
 	@PostMapping
-	public void createWishList(@Login Long userId, @RequestBody @Valid BucketRequestDto.BucketListCreateRequest request) {
-		bucketItemService.createWishList(userId, request);
+	public void createBucketList(@Login Long userId, @RequestBody @Valid BucketRequestDto.BucketListCreateRequest request) {
+		bucketItemService.createBucketList(userId, request);
 	}
 
 	@PostMapping("/{id}")
-	public void createWish(@Login Long userId, @PathVariable(name = "id") Long listId, @RequestBody @Valid
+	public void createBucketItem(@Login Long userId, @PathVariable(name = "id") Long listId, @RequestBody @Valid
 	BucketRequestDto.BucketItemCreateRequest request) {
-		bucketItemService.createWish(userId, listId, request);
+		bucketItemService.createBucketItem(userId, listId, request);
 	}
 
 	@PatchMapping("/{id}/wishes/{wishId}")
-	public void updateWish(@Login Long userId, @PathVariable(name = "id") Long listId,
+	public void updateBucketItem(@Login Long userId, @PathVariable(name = "id") Long listId,
 		@PathVariable Long wishId,
 		@RequestBody @Valid BucketRequestDto.BucketItemCreateRequest request) {
-		bucketItemService.updateWish(userId, listId, wishId, request);
+		bucketItemService.updateBucketItem(userId, listId, wishId, request);
 	}
 
-	@PatchMapping("/{id}/wishes/{wishId}/status")
-	public void updateWishStatus(@Login Long userId, @PathVariable(name = "id") Long listId,
-		@PathVariable Long wishId,
+	@PatchMapping("/{id}/wishes/{bucketId}/status")
+	public void updateBucketItemStatus(@Login Long userId, @PathVariable(name = "id") Long listId,
+		@PathVariable Long bucketId,
 		@RequestBody @Valid BucketRequestDto.BucketItemStatusRequest request) {
-		bucketItemService.updateWishStatus(userId, listId, wishId, request);
+		bucketItemService.updateBucketItemStatus(userId, listId, bucketId, request);
 	}
 
-	@DeleteMapping("/{id}/wishes/{wishId}")
-	public void deleteMyWish(@Login Long userId, @PathVariable(name = "id") Long listId,
-		@PathVariable Long wishId) {
-		bucketItemService.deleteMyWish(userId, listId, wishId);
+	@DeleteMapping("/{id}/wishes/{bucketId}")
+	public void deleteMyBucketItem(@Login Long userId, @PathVariable(name = "id") Long listId,
+		@PathVariable Long bucketId) {
+		bucketItemService.deleteMyBucketItem(userId, listId, bucketId);
 	}
 }

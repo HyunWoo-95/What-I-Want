@@ -25,15 +25,15 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class BucketItemService {
-	private final BucketListRepository wishListRepo;
-	private final BucketItemRepository wishRepo;
+	private final BucketListRepository bucketListRepo;
+	private final BucketItemRepository bucketRepo;
 	private final UserRepository userRepo;
 
 	@Transactional(readOnly = true)
-	public List<BucketListResponse> getMyWishList(Long userId) {
+	public List<BucketListResponse> getMyBucketList(Long userId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
-		List<BucketList> bucketLists = wishListRepo.findAllByUser(user);
+		List<BucketList> bucketLists = bucketListRepo.findAllByUser(user);
 		List<BucketListResponse> res = new ArrayList<>();
 		for (BucketList bucketList : bucketLists) {
 			res.add(
@@ -49,17 +49,17 @@ public class BucketItemService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<BucketItemResponse> getMyWishes(Long userId, Long listId) {
+	public List<BucketItemResponse> getMyBucketItems(Long userId, Long listId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
-		BucketList bucketList = wishListRepo.findByIdAndUser(listId, user);
+		BucketList bucketList = bucketListRepo.findByIdAndUser(listId, user);
 		if (bucketList == null) {
-			throw new GlobalException(ErrorCode.WISHLIST_NOT_FOUND);
+			throw new GlobalException(ErrorCode.BUCKETLIST_NOT_FOUND);
 		}
 
 		List<BucketItem> bucketItems = bucketList.getBucketItems();
 		if (bucketItems.isEmpty()) {
-			throw new GlobalException(ErrorCode.WISH_NOT_FOUND);
+			throw new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND);
 		}
 		List<BucketItemResponse> res = new ArrayList<>();
 		for (BucketItem bucketItem : bucketItems) {
@@ -73,17 +73,17 @@ public class BucketItemService {
 	}
 
 	@Transactional(readOnly = true)
-	public BucketItemResponse getMyWish(Long userId, Long listId, Long wishId) {
+	public BucketItemResponse getMyBucketItem(Long userId, Long listId, Long wishId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
-		BucketList bucketList = wishListRepo.findByIdAndUser(listId, user);
+		BucketList bucketList = bucketListRepo.findByIdAndUser(listId, user);
 		if (bucketList == null) {
-			throw new GlobalException(ErrorCode.WISHLIST_NOT_FOUND);
+			throw new GlobalException(ErrorCode.BUCKETLIST_NOT_FOUND);
 		}
 
-		BucketItem bucketItem = wishRepo.findByIdAndWishList(wishId, bucketList);
+		BucketItem bucketItem = bucketRepo.findByIdAndBucketList(wishId, bucketList);
 		if (bucketItem == null) {
-			throw new GlobalException(ErrorCode.WISH_NOT_FOUND);
+			throw new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND);
 		}
 		return BucketItemResponse.builder()
 			.content(bucketItem.getContent())
@@ -94,23 +94,23 @@ public class BucketItemService {
 	}
 
 	@Transactional
-	public void createWishList(Long userId, BucketListCreateRequest request) {
+	public void createBucketList(Long userId, BucketListCreateRequest request) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
-		BucketList wishes = BucketList.builder()
+		BucketList bucketList = BucketList.builder()
 			.user(user)
 			.title(request.getTitle())
 			.dueDate(request.getDuedate())
 			.build();
-		wishListRepo.save(wishes);
+		bucketListRepo.save(bucketList);
 	}
 
 	@Transactional
-	public void createWish(Long userId, Long listId, BucketItemCreateRequest request) {
+	public void createBucketItem(Long userId, Long listId, BucketItemCreateRequest request) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
-		BucketList bucketList = wishListRepo.findById(listId)
-			.orElseThrow(() -> new GlobalException(ErrorCode.WISHLIST_NOT_FOUND));
+		BucketList bucketList = bucketListRepo.findById(listId)
+			.orElseThrow(() -> new GlobalException(ErrorCode.BUCKETLIST_NOT_FOUND));
 		if (!bucketList.getUser().equals(user)) {
 			throw new GlobalException(ErrorCode.UNAUTHORIZED);
 		}
@@ -119,50 +119,50 @@ public class BucketItemService {
 			.bucketList(bucketList)
 			.content(request.getContent())
 			.build();
-		wishRepo.save(bucketItem);
+		bucketRepo.save(bucketItem);
 	}
 
 	@Transactional
-	public void updateWish(Long userId, Long listId, Long wishId, BucketItemCreateRequest request) {
+	public void updateBucketItem(Long userId, Long listId, Long bucketId, BucketItemCreateRequest request) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
-		BucketList bucketList = wishListRepo.findById(listId)
-			.orElseThrow(() -> new GlobalException(ErrorCode.WISHLIST_NOT_FOUND));
+		BucketList bucketList = bucketListRepo.findById(listId)
+			.orElseThrow(() -> new GlobalException(ErrorCode.BUCKETLIST_NOT_FOUND));
 		if (!bucketList.getUser().equals(user)) {
 			throw new GlobalException(ErrorCode.UNAUTHORIZED);
 		}
 
-		BucketItem bucketItem = wishRepo.findById(wishId).orElseThrow(() -> new GlobalException(ErrorCode.WISH_NOT_FOUND));
+		BucketItem bucketItem = bucketRepo.findById(bucketId).orElseThrow(() -> new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
 		bucketItem.updateWish(request.getContent());
 	}
 
 	@Transactional
-	public void updateWishStatus(Long userId, Long listId, Long wishId, BucketItemStatusRequest request) {
+	public void updateBucketItemStatus(Long userId, Long listId, Long bucketId, BucketItemStatusRequest request) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
-		BucketList bucketList = wishListRepo.findById(listId)
-			.orElseThrow(() -> new GlobalException(ErrorCode.WISHLIST_NOT_FOUND));
+		BucketList bucketList = bucketListRepo.findById(listId)
+			.orElseThrow(() -> new GlobalException(ErrorCode.BUCKETLIST_NOT_FOUND));
 		if (!bucketList.getUser().equals(user)) {
 			throw new GlobalException(ErrorCode.UNAUTHORIZED);
 		}
 
-		BucketItem bucketItem = wishRepo.findById(wishId).orElseThrow(() -> new GlobalException(ErrorCode.WISH_NOT_FOUND));
-		bucketItem.updateWishStatus(request.getStatus());
+		BucketItem bucketItem = bucketRepo.findById(bucketId).orElseThrow(() -> new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
+		bucketItem.updatebucketItemStatus(request.getStatus());
 	}
 
 	@Transactional
-	public void deleteMyWish(Long userId, Long listId, Long wishId) {
+	public void deleteMyBucketItem(Long userId, Long listId, Long bucketId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
-		BucketList bucketList = wishListRepo.findByIdAndUser(listId, user);
+		BucketList bucketList = bucketListRepo.findByIdAndUser(listId, user);
 		if (bucketList == null) {
-			throw new GlobalException(ErrorCode.WISHLIST_NOT_FOUND);
+			throw new GlobalException(ErrorCode.BUCKETLIST_NOT_FOUND);
 		}
 
-		BucketItem bucketItem = wishRepo.findByIdAndWishList(wishId, bucketList);
+		BucketItem bucketItem = bucketRepo.findByIdAndBucketList(bucketId, bucketList);
 		if (bucketItem == null) {
-			throw new GlobalException(ErrorCode.WISH_NOT_FOUND);
+			throw new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND);
 		}
-		wishRepo.deleteById(wishId);
+		bucketRepo.deleteById(bucketId);
 	}
 }

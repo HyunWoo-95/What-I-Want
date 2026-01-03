@@ -50,7 +50,7 @@ public class BucketItem extends BaseTimeEntity {
 		this.content = content;
 	}
 
-	public void updateWishStatus(BucketItemStatus status) {
+	public void updatebucketItemStatus(BucketItemStatus status) {
 		this.status = status;
 	}
 }

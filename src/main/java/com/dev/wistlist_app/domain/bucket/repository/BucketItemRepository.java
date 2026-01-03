@@ -8,7 +8,7 @@ import com.dev.wistlist_app.domain.bucket.entity.BucketList;
 
 @Repository
 public interface BucketItemRepository extends JpaRepository<BucketItem, Long> {
-	BucketItem findByIdAndWishList(Long id, BucketList list);
+	BucketItem findByIdAndBucketList(Long id, BucketList list);
 
 
 }
