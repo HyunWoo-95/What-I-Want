@@ -4,46 +4,38 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
 
-import org.assertj.core.api.Assertions;
 import org.hibernate.AssertionFailure;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.dev.wistlist_app.domain.users.dto.UserRequestDto;
 import com.dev.wistlist_app.domain.users.dto.UserRequestDto.JoinRequest;
 import com.dev.wistlist_app.domain.users.entity.User;
 import com.dev.wistlist_app.domain.users.repository.UserRepository;
 import com.dev.wistlist_app.domain.users.service.UserService;
-import com.dev.wistlist_app.domain.wish.dto.WishRequestDto;
-import com.dev.wistlist_app.domain.wish.dto.WishRequestDto.WishListRequest;
-import com.dev.wistlist_app.domain.wish.dto.WishRequestDto.WishRequest;
-import com.dev.wistlist_app.domain.wish.entity.Wish;
-import com.dev.wistlist_app.domain.wish.entity.WishList;
-import com.dev.wistlist_app.domain.wish.repository.WishListRepository;
-import com.dev.wistlist_app.domain.wish.repository.WishRepository;
-import com.dev.wistlist_app.domain.wish.service.WishService;
+import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketListCreateRequest;
+import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemCreateRequest;
+import com.dev.wistlist_app.domain.bucket.entity.BucketItem;
+import com.dev.wistlist_app.domain.bucket.entity.BucketList;
+import com.dev.wistlist_app.domain.bucket.repository.BucketListRepository;
+import com.dev.wistlist_app.domain.bucket.repository.BucketItemRepository;
+import com.dev.wistlist_app.domain.bucket.service.BucketItemService;
 import com.dev.wistlist_app.global.encrytion.EncryptPasswordEncoder;
-import com.dev.wistlist_app.global.encrytion.SHA256EncryptionService;
 
 @SpringBootTest
-public class WishServiceTest {
+public class BucketItemServiceTest {
 
 	@Autowired
-	private WishService wishService;
+	private BucketItemService bucketItemService;
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private WishRepository wishRepo;
+	private BucketItemRepository wishRepo;
 	@Autowired
 	private UserRepository userRepo;
 	@Autowired
-	private WishListRepository wishListRepo;
+	private BucketListRepository wishListRepo;
 	@Autowired
 	private EncryptPasswordEncoder encoder;
 
@@ -56,8 +48,8 @@ public class WishServiceTest {
 		User joinedUser = userRepo.findByEmail(request.getEmail())
 			.orElseThrow(() -> new AssertionFailure("존재하지 않는 사용자 입니다."));
 
-		WishListRequest req = new WishListRequest("2026 목표", LocalDateTime.now());
-		wishService.createWishList(joinedUser.getId(), req);
+		BucketListCreateRequest req = new BucketListCreateRequest("2026 목표", LocalDateTime.now());
+		bucketItemService.createWishList(joinedUser.getId(), req);
 
 		assertThat(wishListRepo.findAll()).hasSize(1);
 	}
@@ -71,12 +63,12 @@ public class WishServiceTest {
 		User joinedUser = userRepo.findByEmail(request.getEmail())
 			.orElseThrow(() -> new AssertionFailure("존재하지 않는 사용자 입니다."));
 
-		WishListRequest req = new WishListRequest("2026 목표", LocalDateTime.now());
-		wishService.createWishList(joinedUser.getId(), req);
-		WishList wishList = wishListRepo.findAll().get(0);
+		BucketListCreateRequest req = new BucketListCreateRequest("2026 목표", LocalDateTime.now());
+		bucketItemService.createWishList(joinedUser.getId(), req);
+		BucketList bucketList = wishListRepo.findAll().get(0);
 		// when : 위시 생성 정보
-		WishRequest wishReq = new WishRequest("여행가기");
-		wishService.createWish(joinedUser.getId(),wishList.getId() , wishReq);
+		BucketItemCreateRequest wishReq = new BucketItemCreateRequest("여행가기");
+		bucketItemService.createWish(joinedUser.getId(), bucketList.getId() , wishReq);
 		// then : 성공
 		assertThat(wishRepo.findAll()).hasSize(1);
 	}
@@ -90,22 +82,22 @@ public class WishServiceTest {
 		User joinedUser = userRepo.findByEmail(request.getEmail())
 			.orElseThrow(() -> new AssertionFailure("존재하지 않는 사용자 입니다."));
 
-		WishListRequest req = new WishListRequest("2026 목표", LocalDateTime.now());
-		wishService.createWishList(joinedUser.getId(), req);
-		WishList wishList = wishListRepo.findAll().getFirst();
+		BucketListCreateRequest req = new BucketListCreateRequest("2026 목표", LocalDateTime.now());
+		bucketItemService.createWishList(joinedUser.getId(), req);
+		BucketList bucketList = wishListRepo.findAll().getFirst();
 
-		WishRequest wishReq = new WishRequest("여행가기");
-		wishService.createWish(joinedUser.getId(),wishList.getId() , wishReq);
+		BucketItemCreateRequest wishReq = new BucketItemCreateRequest("여행가기");
+		bucketItemService.createWish(joinedUser.getId(), bucketList.getId() , wishReq);
 
 		// when : 위시 수정 정보
-		Wish wish = wishRepo.findByIdAndWishList(1L, wishList);
-		WishRequest updateReq =  new WishRequest("공부하기");
-		wish.updateWish(updateReq.getContent());
+		BucketItem bucketItem = wishRepo.findByIdAndWishList(1L, bucketList);
+		BucketItemCreateRequest updateReq =  new BucketItemCreateRequest("공부하기");
+		bucketItem.updateWish(updateReq.getContent());
 
-		assertThat(joinedUser.getId()).isEqualTo(wish.getUser().getId());
+		assertThat(joinedUser.getId()).isEqualTo(bucketItem.getUser().getId());
 		assertThat(wishRepo.findAll()).hasSize(1);
-		System.out.println(wish.getContent());
-		assertThat(wish.getContent()).isEqualTo("공부하기");
+		System.out.println(bucketItem.getContent());
+		assertThat(bucketItem.getContent()).isEqualTo("공부하기");
 	}
 
 	@Test
@@ -118,16 +110,16 @@ public class WishServiceTest {
 		User joinedUser = userRepo.findByEmail(request.getEmail())
 			.orElseThrow(() -> new AssertionFailure("존재하지 않는 사용자 입니다."));
 
-		WishListRequest req = new WishListRequest("2026 목표", LocalDateTime.now());
-		wishService.createWishList(joinedUser.getId(), req);
-		WishList wishList = wishListRepo.findAll().getFirst();
+		BucketListCreateRequest req = new BucketListCreateRequest("2026 목표", LocalDateTime.now());
+		bucketItemService.createWishList(joinedUser.getId(), req);
+		BucketList bucketList = wishListRepo.findAll().getFirst();
 
-		WishRequest wishReq = new WishRequest("여행가기");
-		wishService.createWish(joinedUser.getId(),wishList.getId() , wishReq);
+		BucketItemCreateRequest wishReq = new BucketItemCreateRequest("여행가기");
+		bucketItemService.createWish(joinedUser.getId(), bucketList.getId() , wishReq);
 		assertThat(wishRepo.findAll()).hasSize(1);
-		Wish wish = wishRepo.findByIdAndWishList(1L, wishList);
+		BucketItem bucketItem = wishRepo.findByIdAndWishList(1L, bucketList);
 		// then : 삭제 행동
-		wishService.deleteMyWish(joinedUser.getId(), wishList.getId(),wish.getId());
+		bucketItemService.deleteMyWish(joinedUser.getId(), bucketList.getId(), bucketItem.getId());
 		// when : 성공
 		assertThat(wishRepo.findAll()).isEmpty();
 	}

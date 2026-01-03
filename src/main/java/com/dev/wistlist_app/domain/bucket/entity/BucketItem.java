@@ -1,22 +1,17 @@
-package com.dev.wistlist_app.domain.wish.entity;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+package com.dev.wistlist_app.domain.bucket.entity;
 
 import com.dev.wistlist_app.domain.BaseTimeEntity;
 import com.dev.wistlist_app.domain.users.entity.User;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,27 +20,37 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WishList extends BaseTimeEntity {
+public class BucketItem extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	@JoinColumn(name = "user_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 
-	private String title;
+	@JoinColumn(name = "list_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private BucketList bucketList;
 
-	private LocalDateTime dueDate;
+	private String content;
 
-	@OneToMany(mappedBy = "wishList", fetch = FetchType.LAZY)
-	private List<Wish> wishes = new ArrayList<>();
+	@Enumerated(value = EnumType.STRING)
+	private BucketItemStatus status;
 
 	@Builder
-	public WishList(User user, String title, LocalDateTime dueDate) {
+	public BucketItem(User user, BucketList bucketList, String content) {
 		this.user = user;
-		this.title = title;
-		this.dueDate = dueDate;
+		this.bucketList = bucketList;
+		this.content = content;
+		this.status = BucketItemStatus.OPEN;
+	}
+
+	public void updateWish(String content) {
+		this.content = content;
+	}
+
+	public void updateWishStatus(BucketItemStatus status) {
+		this.status = status;
 	}
 }
