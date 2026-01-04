@@ -1,11 +1,11 @@
-package com.dev.wistlist_app.domain.wish.entity;
+package com.dev.wistlist_app.domain.bucket.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum WishStatus {
+public enum BucketItemStatus {
 
 	DONE("성공"),
 	IN_PROGRESS("진행중"),

@@ -1,4 +1,4 @@
-package com.dev.wistlist_app.domain.wish.entity;
+package com.dev.wistlist_app.domain.bucket.entity;
 
 import com.dev.wistlist_app.domain.BaseTimeEntity;
 import com.dev.wistlist_app.domain.users.entity.User;
@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Wish extends BaseTimeEntity {
+public class BucketItem extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,26 +31,26 @@ public class Wish extends BaseTimeEntity {
 
 	@JoinColumn(name = "list_id")
 	@ManyToOne(fetch = FetchType.LAZY)
-	private WishList wishList;
+	private BucketList bucketList;
 
 	private String content;
 
 	@Enumerated(value = EnumType.STRING)
-	private WishStatus status;
+	private BucketItemStatus status;
 
 	@Builder
-	public Wish(User user, WishList wishList, String content) {
+	public BucketItem(User user, BucketList bucketList, String content) {
 		this.user = user;
-		this.wishList = wishList;
+		this.bucketList = bucketList;
 		this.content = content;
-		this.status = WishStatus.OPEN;
+		this.status = BucketItemStatus.OPEN;
 	}
 
-	public void updateWish(String content) {
+	public void updateBucketItem(String content) {
 		this.content = content;
 	}
 
-	public void updateWishStatus(WishStatus status) {
+	public void updatebucketItemStatus(BucketItemStatus status) {
 		this.status = status;
 	}
 }

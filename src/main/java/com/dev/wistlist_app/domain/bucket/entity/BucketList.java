@@ -1,10 +1,8 @@
-package com.dev.wistlist_app.domain.wish.entity;
+package com.dev.wistlist_app.domain.bucket.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.dev.wistlist_app.domain.BaseTimeEntity;
 import com.dev.wistlist_app.domain.users.entity.User;
@@ -25,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WishList extends BaseTimeEntity {
+public class BucketList extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,11 +37,11 @@ public class WishList extends BaseTimeEntity {
 
 	private LocalDateTime dueDate;
 
-	@OneToMany(mappedBy = "wishList", fetch = FetchType.LAZY)
-	private List<Wish> wishes = new ArrayList<>();
+	@OneToMany(mappedBy = "bucketList", fetch = FetchType.LAZY)
+	private List<BucketItem> bucketItems = new ArrayList<>();
 
 	@Builder
-	public WishList(User user, String title, LocalDateTime dueDate) {
+	public BucketList(User user, String title, LocalDateTime dueDate) {
 		this.user = user;
 		this.title = title;
 		this.dueDate = dueDate;

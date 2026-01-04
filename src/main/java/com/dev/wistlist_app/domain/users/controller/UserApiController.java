@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dev.wistlist_app.domain.users.dto.UserRequestDto;
 import com.dev.wistlist_app.domain.users.dto.UserRequestDto.JoinRequest;
 import com.dev.wistlist_app.domain.users.dto.UserRequestDto.LoginRequest;
+import com.dev.wistlist_app.domain.users.dto.UserRequestDto.ProfileRequest;
 import com.dev.wistlist_app.domain.users.dto.UserResponseDto;
 import com.dev.wistlist_app.domain.users.service.UserService;
 import com.dev.wistlist_app.domain.users.service.SessionLoginService;
@@ -23,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @Validated
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserApiController {
 
@@ -46,7 +47,7 @@ public class UserApiController {
 	}
 
 	@PostMapping("/profile")
-	public void saveProfile(@Login Long userId, @RequestBody UserRequestDto.ProfileRequest req) {
+	public void saveProfile(@Login Long userId, @RequestBody ProfileRequest req) {
 		userService.saveProfile(userId, req);
 	}
 }

@@ -1,21 +1,21 @@
-package com.dev.wistlist_app.domain.wish.dto;
+package com.dev.wistlist_app.domain.bucket.dto;
 
 import java.time.LocalDateTime;
 
-import com.dev.wistlist_app.domain.wish.entity.WishStatus;
+import com.dev.wistlist_app.domain.bucket.entity.BucketItemStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class WishResponseDto {
+public class BucketResponseDto {
 
 	@Getter
 	@Builder
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public static class WishListResponse {
+	public static class BucketListResponse {
 		private Long listId;
 		private Long userId;
 		private String title;
@@ -26,21 +26,21 @@ public class WishResponseDto {
 	@Builder
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public static class WishResponse {
+	public static class BucketItemResponse {
 		private Long wishId;
 		private String content;
-		private WishStatus status;
+		private BucketItemStatus status;
 		private LocalDateTime createdAt;
 		private LocalDateTime updatedAt;
 
-		public WishResponse(String content, WishStatus status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+		public BucketItemResponse(String content, BucketItemStatus status, LocalDateTime createdAt, LocalDateTime updatedAt) {
 			this.content = content;
 			this.status = status;
 			this.createdAt = createdAt;
 			this.updatedAt = updatedAt;
 		}
 
-		public WishResponse(Long wishId, String content, WishStatus status, LocalDateTime createdAt) {
+		public BucketItemResponse(Long wishId, String content, BucketItemStatus status, LocalDateTime createdAt) {
 			this.wishId = wishId;
 			this.content = content;
 			this.status = status;
