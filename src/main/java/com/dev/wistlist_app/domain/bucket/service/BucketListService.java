@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto;
 import com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto;
+import com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.BucketItemResponse;
+import com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.BucketListResponse;
 import com.dev.wistlist_app.domain.bucket.entity.BucketItem;
 import com.dev.wistlist_app.domain.bucket.entity.BucketList;
 import com.dev.wistlist_app.domain.bucket.repository.BucketListRepository;
@@ -26,14 +28,14 @@ public class BucketListService {
 	private final UserRepository userRepo;
 
 	@Transactional(readOnly = true)
-	public List<BucketResponseDto.BucketListResponse> getMyBucketList(Long userId) {
+	public List<BucketListResponse> getMyBucketList(Long userId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		List<BucketList> bucketLists = bucketListRepo.findAllByUser(user);
-		List<BucketResponseDto.BucketListResponse> res = new ArrayList<>();
+		List<BucketListResponse> res = new ArrayList<>();
 		for (BucketList bucketList : bucketLists) {
 			res.add(
-				BucketResponseDto.BucketListResponse.builder()
+				BucketListResponse.builder()
 					.listId(bucketList.getId())
 					.userId(user.getId())
 					.title(bucketList.getTitle())
@@ -45,7 +47,7 @@ public class BucketListService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<BucketResponseDto.BucketItemResponse> getMyBucketItems(Long userId, Long listId) {
+	public List<BucketItemResponse> getMyBucketItems(Long userId, Long listId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		BucketList bucketList = bucketListRepo.findByIdAndUser(listId, user);
@@ -57,9 +59,9 @@ public class BucketListService {
 		if (bucketItems.isEmpty()) {
 			throw new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND);
 		}
-		List<BucketResponseDto.BucketItemResponse> res = new ArrayList<>();
+		List<BucketItemResponse> res = new ArrayList<>();
 		for (BucketItem bucketItem : bucketItems) {
-			res.add(BucketResponseDto.BucketItemResponse.builder()
+			res.add(BucketItemResponse.builder()
 				.wishId(bucketItem.getId())
 				.content(bucketItem.getContent())
 				.createdAt(bucketItem.getCreatedAt())

@@ -2,9 +2,6 @@ package com.dev.wistlist_app.domain.bucket.service;
 
 import static com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

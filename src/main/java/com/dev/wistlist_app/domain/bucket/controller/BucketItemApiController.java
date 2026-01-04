@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto;
+import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemCreateRequest;
+import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemStatusRequest;
 import com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.BucketItemResponse;
 import com.dev.wistlist_app.domain.bucket.service.BucketItemService;
 import com.dev.wistlist_app.global.annotation.Login;
@@ -34,21 +36,21 @@ public class BucketItemApiController {
 
 	@PostMapping("/{listId}")
 	public void createBucketItem(@Login Long userId, @PathVariable Long listId, @RequestBody @Valid
-	BucketRequestDto.BucketItemCreateRequest request) {
+	BucketItemCreateRequest request) {
 		bucketItemService.createBucketItem(userId, listId, request);
 	}
 
 	@PatchMapping("/{listId}/items/{bucketId}")
 	public void updateBucketItem(@Login Long userId, @PathVariable Long listId,
 		@PathVariable Long bucketId,
-		@RequestBody @Valid BucketRequestDto.BucketItemCreateRequest request) {
+		@RequestBody @Valid BucketItemCreateRequest request) {
 		bucketItemService.updateBucketItem(userId, listId, bucketId, request);
 	}
 
 	@PatchMapping("/{listId}/items/{bucketId}/status")
 	public void updateBucketItemStatus(@Login Long userId, @PathVariable Long listId,
 		@PathVariable Long bucketId,
-		@RequestBody @Valid BucketRequestDto.BucketItemStatusRequest request) {
+		@RequestBody @Valid BucketItemStatusRequest request) {
 		bucketItemService.updateBucketItemStatus(userId, listId, bucketId, request);
 	}
 
