@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto;
-import com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto;
 import com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.BucketItemResponse;
 import com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.BucketListResponse;
 import com.dev.wistlist_app.domain.bucket.entity.BucketItem;
@@ -62,7 +61,7 @@ public class BucketListService {
 		List<BucketItemResponse> res = new ArrayList<>();
 		for (BucketItem bucketItem : bucketItems) {
 			res.add(BucketItemResponse.builder()
-				.wishId(bucketItem.getId())
+				.bucketId(bucketItem.getId())
 				.content(bucketItem.getContent())
 				.createdAt(bucketItem.getCreatedAt())
 				.build());

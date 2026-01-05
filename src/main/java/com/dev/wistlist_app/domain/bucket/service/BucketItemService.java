@@ -2,6 +2,9 @@ package com.dev.wistlist_app.domain.bucket.service;
 
 import static com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +48,7 @@ public class BucketItemService {
 			.updatedAt(bucketItem.getUpdatedAt())
 			.build();
 	}
+
 	@Transactional
 	public void createBucketItem(Long userId, Long listId, BucketItemCreateRequest request) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
@@ -72,7 +76,8 @@ public class BucketItemService {
 			throw new GlobalException(ErrorCode.UNAUTHORIZED);
 		}
 
-		BucketItem bucketItem = bucketRepo.findById(bucketId).orElseThrow(() -> new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
+		BucketItem bucketItem = bucketRepo.findById(bucketId)
+			.orElseThrow(() -> new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
 		bucketItem.updateBucketItem(request.getContent());
 	}
 
@@ -86,7 +91,8 @@ public class BucketItemService {
 			throw new GlobalException(ErrorCode.UNAUTHORIZED);
 		}
 
-		BucketItem bucketItem = bucketRepo.findById(bucketId).orElseThrow(() -> new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
+		BucketItem bucketItem = bucketRepo.findById(bucketId)
+			.orElseThrow(() -> new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
 		bucketItem.updatebucketItemStatus(request.getStatus());
 	}
 
@@ -104,5 +110,23 @@ public class BucketItemService {
 			throw new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND);
 		}
 		bucketRepo.deleteById(bucketId);
+	}
+
+	@Transactional(readOnly = true)
+	public List<BucketItemResponse> getAllBucketItems() {
+		List<BucketItem> bucketItems = bucketRepo.findAll();
+		List<BucketItemResponse> res = new ArrayList<>();
+		for (BucketItem bucketItem : bucketItems) {
+			res.add(
+				BucketItemResponse.builder()
+					.bucketId(bucketItem.getId())
+					.content(bucketItem.getContent())
+					.status(bucketItem.getStatus())
+					.createdAt(bucketItem.getCreatedAt())
+					.updatedAt(bucketItem.getUpdatedAt())
+					.build()
+			);
+		}
+		return res;
 	}
 }
