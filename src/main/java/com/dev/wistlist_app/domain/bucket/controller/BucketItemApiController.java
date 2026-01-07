@@ -39,9 +39,8 @@ public class BucketItemApiController {
 
 	@GetMapping("/search")
 	public ApiResponse<List<BucketItemResponse>> getAllBucketItemBySearch(
-		@RequestParam(required = false) String keyword,
-		@RequestParam(required = false) BucketItemStatus status) {
-		return ApiResponse.success(bucketItemService.getAllBucketItemBySearch(keyword,status));
+		@RequestParam(required = false) String keyword) {
+		return ApiResponse.success(bucketItemService.getAllBucketItemBySearch(keyword));
 	}
 
 	@GetMapping("/{listId}/items/{bucketId}")

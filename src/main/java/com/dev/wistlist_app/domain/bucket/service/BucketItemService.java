@@ -131,8 +131,8 @@ public class BucketItemService {
 		return res;
 	}
 	@Transactional(readOnly = true)
-	public List<BucketItemResponse> getAllBucketItemBySearch(String content, BucketItemStatus status) {
-		List<BucketItem> bucketItems = bucketRepo.searchBucketItems(content,status);
+	public List<BucketItemResponse> getAllBucketItemBySearch(String content) {
+		List<BucketItem> bucketItems = bucketRepo.searchBucketItems(content);
 		List<BucketItemResponse> res = new ArrayList<>();
 		for (BucketItem bucketItem : bucketItems) {
 			res.add(
