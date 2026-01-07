@@ -27,7 +27,7 @@ public class BucketResponseDto {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	public static class BucketItemResponse {
-		private Long wishId;
+		private Long bucketId;
 		private String content;
 		private BucketItemStatus status;
 		private LocalDateTime createdAt;
@@ -40,8 +40,8 @@ public class BucketResponseDto {
 			this.updatedAt = updatedAt;
 		}
 
-		public BucketItemResponse(Long wishId, String content, BucketItemStatus status, LocalDateTime createdAt) {
-			this.wishId = wishId;
+		public BucketItemResponse(Long bucketId, String content, BucketItemStatus status, LocalDateTime createdAt) {
+			this.bucketId = bucketId;
 			this.content = content;
 			this.status = status;
 			this.createdAt = createdAt;
