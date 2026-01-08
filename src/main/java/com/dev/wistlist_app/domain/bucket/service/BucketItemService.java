@@ -8,7 +8,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dev.wistlist_app.domain.bucket.entity.BucketItemStatus;
 import com.dev.wistlist_app.domain.users.entity.User;
 import com.dev.wistlist_app.domain.users.repository.UserRepository;
 import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemCreateRequest;
@@ -28,6 +27,7 @@ public class BucketItemService {
 	private final BucketListRepository bucketListRepo;
 	private final BucketItemRepository bucketRepo;
 	private final UserRepository userRepo;
+
 
 	@Transactional(readOnly = true)
 	public BucketItemResponse getMyBucketItem(Long userId, Long listId, Long bucketId) {
@@ -130,6 +130,7 @@ public class BucketItemService {
 		}
 		return res;
 	}
+
 	@Transactional(readOnly = true)
 	public List<BucketItemResponse> getAllBucketItemBySearch(String content) {
 		List<BucketItem> bucketItems = bucketRepo.searchBucketItems(content);

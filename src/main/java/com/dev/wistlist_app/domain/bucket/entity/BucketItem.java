@@ -1,6 +1,10 @@
 package com.dev.wistlist_app.domain.bucket.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dev.wistlist_app.domain.BaseTimeEntity;
+import com.dev.wistlist_app.domain.cheer.entity.Cheer;
 import com.dev.wistlist_app.domain.users.entity.User;
 
 import jakarta.persistence.Entity;
@@ -12,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +42,9 @@ public class BucketItem extends BaseTimeEntity {
 
 	@Enumerated(value = EnumType.STRING)
 	private BucketItemStatus status;
+
+	@OneToMany(mappedBy = "bucketItem")
+	private List<Cheer> cheers = new ArrayList<>();
 
 	@Builder
 	public BucketItem(User user, BucketList bucketList, String content) {

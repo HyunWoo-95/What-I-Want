@@ -1,6 +1,5 @@
 package com.dev.wistlist_app.domain.users.entity;
 
-import java.time.LocalDateTime;
 
 import com.dev.wistlist_app.domain.BaseTimeEntity;
 
