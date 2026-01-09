@@ -1,6 +1,5 @@
 package com.dev.wistlist_app.domain.bucket.controller;
 
-
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,12 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto;
 import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemCreateRequest;
 import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemStatusRequest;
 import com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.BucketItemResponse;
-import com.dev.wistlist_app.domain.bucket.entity.BucketItemStatus;
 import com.dev.wistlist_app.domain.bucket.service.BucketItemService;
+import com.dev.wistlist_app.domain.cheer.service.CheerService;
 import com.dev.wistlist_app.global.annotation.Login;
 import com.dev.wistlist_app.global.response.ApiResponse;
 
@@ -31,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class BucketItemApiController {
 
 	private final BucketItemService bucketItemService;
+	private final CheerService cheerService;
 
 	@GetMapping
 	public ApiResponse<List<BucketItemResponse>> getAllBucketItems() {
@@ -73,5 +72,15 @@ public class BucketItemApiController {
 	public void deleteMyBucketItem(@Login Long userId, @PathVariable Long listId,
 		@PathVariable Long bucketId) {
 		bucketItemService.deleteMyBucketItem(userId, listId, bucketId);
+	}
+
+	@PostMapping("/{bucketId}/cheers")
+	public void sendCheer(@Login Long userId, @PathVariable Long bucketId) {
+		cheerService.sendCheer(userId, bucketId);
+	}
+
+	@DeleteMapping("/{bucketId}/cheers")
+	public void deleteCheer(@Login Long userId, @PathVariable Long bucketId) {
+		cheerService.deleteCheer(userId, bucketId);
 	}
 }
