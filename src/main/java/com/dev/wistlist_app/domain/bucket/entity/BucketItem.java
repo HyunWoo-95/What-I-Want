@@ -1,5 +1,6 @@
 package com.dev.wistlist_app.domain.bucket.entity;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class BucketItem extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	@JoinColumn(name = "user_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
@@ -43,15 +45,27 @@ public class BucketItem extends BaseTimeEntity {
 	@Enumerated(value = EnumType.STRING)
 	private BucketItemStatus status;
 
+	private LocalDate dueDate;
+
 	@OneToMany(mappedBy = "bucketItem")
 	private List<Cheer> cheers = new ArrayList<>();
 
+	private BucketItem(Long id,User user, BucketList bucketList, String content, BucketItemStatus status, LocalDate dueDate ,List<Cheer> cheers) {
+		this.id = id;
+		this.user = user;
+		this.bucketList = bucketList;
+		this.content = content;
+		this.status = status;
+		this.cheers = cheers;
+	}
+
 	@Builder
-	public BucketItem(User user, BucketList bucketList, String content) {
+	public BucketItem(User user, BucketList bucketList, String content, LocalDate dueDate) {
 		this.user = user;
 		this.bucketList = bucketList;
 		this.content = content;
 		this.status = BucketItemStatus.OPEN;
+		this.dueDate = dueDate;
 	}
 
 	public void updateBucketItem(String content) {

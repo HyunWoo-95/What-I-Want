@@ -1,6 +1,5 @@
 package com.dev.wistlist_app.domain.bucket.entity;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,20 +29,24 @@ public class BucketList extends BaseTimeEntity {
 	private Long id;
 
 	@JoinColumn(name = "user_id")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
 	private User user;
 
 	private String title;
 
-	private LocalDateTime dueDate;
-
 	@OneToMany(mappedBy = "bucketList", fetch = FetchType.LAZY)
 	private List<BucketItem> bucketItems = new ArrayList<>();
 
-	@Builder
-	public BucketList(User user, String title, LocalDateTime dueDate) {
+	private BucketList(Long id, User user, String title, List<BucketItem> bucketItems) {
+		this.id = id;
 		this.user = user;
 		this.title = title;
-		this.dueDate = dueDate;
+		this.bucketItems = bucketItems;
+	}
+
+	@Builder
+	public BucketList(User user, String title) {
+		this.user = user;
+		this.title = title;
 	}
 }

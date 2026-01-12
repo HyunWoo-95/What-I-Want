@@ -38,7 +38,6 @@ public class BucketListService {
 					.listId(bucketList.getId())
 					.userId(user.getId())
 					.title(bucketList.getTitle())
-					.dueDate(bucketList.getDueDate())
 					.build()
 			);
 		}
@@ -78,7 +77,6 @@ public class BucketListService {
 		BucketList bucketList = BucketList.builder()
 			.user(user)
 			.title(request.getTitle())
-			.dueDate(request.getDuedate())
 			.build();
 		bucketListRepo.save(bucketList);
 	}
