@@ -56,6 +56,7 @@ public class BucketItem extends BaseTimeEntity {
 		this.bucketList = bucketList;
 		this.content = content;
 		this.status = status;
+		this.dueDate = dueDate;
 		this.cheers = cheers;
 	}
 

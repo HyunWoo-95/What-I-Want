@@ -1,6 +1,6 @@
 package com.dev.wistlist_app.domain.bucket.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import com.dev.wistlist_app.domain.bucket.entity.BucketItemStatus;
 
@@ -16,8 +16,6 @@ public class BucketRequestDto {
 	public static class BucketListCreateRequest {
 		@NotBlank(message = "제목은 필수입니다")
 		private String title;
-		@NotBlank(message = "마감일은 필수 입니다.")
-		private LocalDateTime duedate;
 	}
 
 	@Getter
@@ -26,6 +24,8 @@ public class BucketRequestDto {
 	public static class BucketItemCreateRequest {
 		@NotBlank(message = "내용은 필수입니다")
 		private String content;
+		@NotBlank(message = "마감일은 필수 입니다.")
+		private LocalDate duedate;
 	}
 
 	@Getter
