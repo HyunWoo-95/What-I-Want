@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dev.wistlist_app.domain.users.entity.User;
+import com.dev.wistlist_app.domain.users.entity.UserProfile;
+import com.dev.wistlist_app.domain.users.repository.UserProfileRepository;
 import com.dev.wistlist_app.domain.users.repository.UserRepository;
 import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemCreateRequest;
 import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemStatusRequest;
@@ -28,7 +30,6 @@ public class BucketItemService {
 	private final BucketItemRepository bucketRepo;
 	private final UserRepository userRepo;
 
-
 	@Transactional(readOnly = true)
 	public BucketItemResponse getMyBucketItem(Long userId, Long listId, Long bucketId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
@@ -43,8 +44,12 @@ public class BucketItemService {
 			throw new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND);
 		}
 		return BucketItemResponse.builder()
+			.userId(userId)
+			.username(bucketItem.getUser().getUsername())
+			.listId(listId)
 			.content(bucketItem.getContent())
 			.status(bucketItem.getStatus())
+			.dueDate(bucketItem.getDueDate())
 			.createdAt(bucketItem.getCreatedAt())
 			.updatedAt(bucketItem.getUpdatedAt())
 			.build();
@@ -62,7 +67,9 @@ public class BucketItemService {
 
 		BucketItem bucketItem = BucketItem.builder().user(user)
 			.bucketList(bucketList)
+			.user(bucketList.getUser())
 			.content(request.getContent())
+			.dueDate(request.getDuedate())
 			.build();
 		bucketRepo.save(bucketItem);
 	}
@@ -120,6 +127,8 @@ public class BucketItemService {
 		for (BucketItem bucketItem : bucketItems) {
 			res.add(
 				BucketItemResponse.builder()
+					.userId(bucketItem.getUser().getId())
+					.username(bucketItem.getUser().getUsername())
 					.bucketId(bucketItem.getId())
 					.content(bucketItem.getContent())
 					.status(bucketItem.getStatus())
@@ -138,6 +147,8 @@ public class BucketItemService {
 		for (BucketItem bucketItem : bucketItems) {
 			res.add(
 				BucketItemResponse.builder()
+					.userId(bucketItem.getUser().getId())
+					.username(bucketItem.getUser().getUsername())
 					.bucketId(bucketItem.getId())
 					.content(bucketItem.getContent())
 					.status(bucketItem.getStatus())

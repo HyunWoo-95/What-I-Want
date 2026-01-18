@@ -1,5 +1,6 @@
 package com.dev.wistlist_app.domain.bucket.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.dev.wistlist_app.domain.bucket.entity.BucketItemStatus;
@@ -19,7 +20,6 @@ public class BucketResponseDto {
 		private Long listId;
 		private Long userId;
 		private String title;
-		private LocalDateTime dueDate;
 	}
 
 	@Getter
@@ -27,23 +27,27 @@ public class BucketResponseDto {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	public static class BucketItemResponse {
+		private Long userId;
+		private String username;
+		private Long listId;
 		private Long bucketId;
 		private String content;
 		private BucketItemStatus status;
+		private LocalDate dueDate;
 		private LocalDateTime createdAt;
 		private LocalDateTime updatedAt;
 
-		public BucketItemResponse(String content, BucketItemStatus status, LocalDateTime createdAt, LocalDateTime updatedAt) {
-			this.content = content;
-			this.status = status;
-			this.createdAt = createdAt;
-			this.updatedAt = updatedAt;
-		}
-
-		public BucketItemResponse(Long bucketId, String content, BucketItemStatus status, LocalDateTime createdAt) {
+		public BucketItemResponse(Long userId, String username, Long listId, Long bucketId, String content,
+			BucketItemStatus status,
+			LocalDate dueDate,
+			LocalDateTime createdAt) {
+			this.userId = userId;
+			this.username = username;
+			this.listId = listId;
 			this.bucketId = bucketId;
 			this.content = content;
 			this.status = status;
+			this.dueDate = dueDate;
 			this.createdAt = createdAt;
 		}
 	}
