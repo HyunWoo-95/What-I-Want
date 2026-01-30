@@ -44,10 +44,10 @@ public class UserService {
 		User user = userRepo.findById(userId).orElseThrow(
 			() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
-		UserProfile profile = profileRepo.findByUser(user);
-		if (profile == null){
-			throw new GlobalException(ErrorCode.PROFILE_NOT_EXIST);
-		}
+		UserProfile profile = profileRepo.findByUser(user).orElseThrow(()
+			-> new GlobalException(ErrorCode.PROFILE_NOT_EXIST)
+		);
+
 		return new ProfileRespone(
 			profile.getNickname(),
 			profile.getInterest(),

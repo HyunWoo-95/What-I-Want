@@ -26,6 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(loginCheckInterceptor).addPathPatterns("/**")
-			.excludePathPatterns("/error", "/api/v1/users/join", "/api/v1/users/login");
+			.excludePathPatterns("/error", "/api/v1/users/join", "/api/v1/users/login"
+			,"/api/v1/bucket-items/search");
 	}
 }

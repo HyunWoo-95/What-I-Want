@@ -92,10 +92,8 @@ public class UserServiceTest {
 		UserRequestDto.ProfileRequest req = new UserRequestDto.ProfileRequest("test", Interest.HEALTH);
 		userService.saveProfile(user.getId(), req);
 
-		UserProfile profile = userProfileRepository.findByUser(user);
-		if (profile == null) {
-			throw new IllegalArgumentException("등록된 프로필이 없습니다.");
-		}
+		UserProfile profile = userProfileRepository.findByUser(user).orElseThrow(() -> new GlobalException(ErrorCode.PROFILE_NOT_EXIST));
+
 		assertThat(profile.getNickname()).isEqualTo(req.getNickname());
 		assertThat(profile.getInterest()).isEqualTo(req.getInterest().getName());
 	}
