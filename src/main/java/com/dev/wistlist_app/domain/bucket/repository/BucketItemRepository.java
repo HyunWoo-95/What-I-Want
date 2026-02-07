@@ -2,6 +2,8 @@ package com.dev.wistlist_app.domain.bucket.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,5 +21,11 @@ public interface BucketItemRepository extends JpaRepository<BucketItem, Long> {
 		"ORDER BY bi.createdAt DESC")
 	List<BucketItem> searchBucketItems(
 		@Param("content") String content);
+
+	@Query("SELECT bi FROM BucketItem bi " +
+		"WHERE (:content IS NULL OR LOWER(bi.content) LIKE LOWER(CONCAT('%', :content, '%'))) " +
+		"ORDER BY bi.createdAt DESC")
+	Page<BucketItem> searchBucketItems(@Param("content") String content,
+		Pageable pageable);
 
 }
