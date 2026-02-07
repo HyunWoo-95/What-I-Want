@@ -5,6 +5,9 @@ import static com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -158,5 +161,25 @@ public class BucketItemService {
 			);
 		}
 		return res;
+	}
+
+	@Transactional
+	public Page<BucketItemResponse> getAllBuckItemPageBySearch(String content, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<BucketItem> bucketItems = bucketRepo.searchBucketItems(content, pageable);
+
+		return bucketItems.map(this::toBucketItemResponse);
+	}
+
+	private BucketItemResponse toBucketItemResponse(BucketItem bucketItem) {
+		return BucketItemResponse.builder()
+			.userId(bucketItem.getUser().getId())
+			.username(bucketItem.getUser().getUsername())
+			.bucketId(bucketItem.getId())
+			.content(bucketItem.getContent())
+			.status(bucketItem.getStatus())
+			.createdAt(bucketItem.getCreatedAt())
+			.updatedAt(bucketItem.getUpdatedAt())
+			.build();
 	}
 }
