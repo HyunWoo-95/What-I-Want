@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemCreateRequest;
@@ -36,42 +35,34 @@ public class BucketItemApiController {
 		return ApiResponse.success(bucketItemService.getAllBucketItems());
 	}
 
-	@GetMapping("/search")
-	public ApiResponse<List<BucketItemResponse>> getAllBucketItemBySearch(
-		@RequestParam(required = false, defaultValue = "") String content) {
-		return ApiResponse.success(bucketItemService.getAllBucketItemBySearch(content));
-	}
-
-	@GetMapping("/{listId}/items/{bucketId}")
-	public ApiResponse<BucketItemResponse> getMyBucketItem(@Login Long userId, @PathVariable Long listId,
+	@GetMapping("/{bucketId}")
+	public ApiResponse<BucketItemResponse> getMyBucketItem(@Login Long userId,
 		@PathVariable Long bucketId) {
-		return ApiResponse.success(bucketItemService.getMyBucketItem(userId, listId, bucketId));
+		return ApiResponse.success(bucketItemService.getMyBucketItem(userId , bucketId));
 	}
 
-	@PostMapping("/{listId}")
-	public void createBucketItem(@Login Long userId, @PathVariable Long listId, @RequestBody @Valid
+	@PostMapping
+	public void createBucketItem(@Login Long userId,  @RequestBody @Valid
 	BucketItemCreateRequest request) {
-		bucketItemService.createBucketItem(userId, listId, request);
+		bucketItemService.createBucketItem(userId,  request);
 	}
 
-	@PatchMapping("/{listId}/items/{bucketId}")
-	public void updateBucketItem(@Login Long userId, @PathVariable Long listId,
-		@PathVariable Long bucketId,
+	@PatchMapping("/{bucketId}")
+	public void updateBucketItem(@Login Long userId, @PathVariable Long bucketId,
 		@RequestBody @Valid BucketItemCreateRequest request) {
-		bucketItemService.updateBucketItem(userId, listId, bucketId, request);
+		bucketItemService.updateBucketItem(userId, bucketId, request);
 	}
 
-	@PatchMapping("/{listId}/items/{bucketId}/status")
-	public void updateBucketItemStatus(@Login Long userId, @PathVariable Long listId,
+	@PatchMapping("/{bucketId}/status")
+	public void updateBucketItemStatus(@Login Long userId,
 		@PathVariable Long bucketId,
 		@RequestBody @Valid BucketItemStatusRequest request) {
-		bucketItemService.updateBucketItemStatus(userId, listId, bucketId, request);
+		bucketItemService.updateBucketItemStatus(userId, bucketId, request);
 	}
 
-	@DeleteMapping("/{listId}/items/{bucketId}")
-	public void deleteMyBucketItem(@Login Long userId, @PathVariable Long listId,
-		@PathVariable Long bucketId) {
-		bucketItemService.deleteMyBucketItem(userId, listId, bucketId);
+	@DeleteMapping("/{bucketId}")
+	public void deleteMyBucketItem(@Login Long userId, @PathVariable Long bucketId) {
+		bucketItemService.deleteMyBucketItem(userId,  bucketId);
 	}
 
 	@PostMapping("/{bucketId}/cheers")

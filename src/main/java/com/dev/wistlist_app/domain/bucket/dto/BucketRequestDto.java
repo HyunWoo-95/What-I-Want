@@ -10,13 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 public class BucketRequestDto {
-	@Getter
-	@AllArgsConstructor
-	@NoArgsConstructor
-	public static class BucketListCreateRequest {
-		@NotBlank(message = "제목은 필수입니다")
-		private String title;
-	}
 
 	@Getter
 	@AllArgsConstructor
@@ -25,7 +18,7 @@ public class BucketRequestDto {
 		@NotBlank(message = "내용은 필수입니다")
 		private String content;
 		@NotBlank(message = "마감일은 필수 입니다.")
-		private LocalDate duedate;
+		private LocalDate dueDate;
 	}
 
 	@Getter

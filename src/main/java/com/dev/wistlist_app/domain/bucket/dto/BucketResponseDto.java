@@ -16,16 +16,6 @@ public class BucketResponseDto {
 	@Builder
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public static class BucketListResponse {
-		private Long listId;
-		private Long userId;
-		private String title;
-	}
-
-	@Getter
-	@Builder
-	@AllArgsConstructor
-	@NoArgsConstructor
 	public static class BucketItemResponse {
 		private Long userId;
 		private String username;
