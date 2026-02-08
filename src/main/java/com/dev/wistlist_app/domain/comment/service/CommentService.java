@@ -1,6 +1,5 @@
 package com.dev.wistlist_app.domain.comment.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -36,11 +35,24 @@ public class CommentService {
 		return comments.stream().map(this::toCommentResponse).toList();
 	}
 
-	private CommentResponseDto toCommentResponse(Comment comment) {
-		return CommentResponseDto.builder().userId(comment.getUser().getId())
+	@Transactional(readOnly = true)
+	public CommentResponseDto.CommentWithReplyResponseDto getComment(Long bucketId, Long commentId) {
+		BucketItem bucketItem = bucketRepo.findById(bucketId).orElseThrow(() ->
+			new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
+
+		Comment comment = commentRepo.findByIdAndBucketItem(commentId, bucketItem);
+
+		List<CommentResponseDto.ReplyResponseDto> replies = comment.getReplies().stream().map(reply ->
+			new CommentResponseDto.ReplyResponseDto(reply.getUser().getId(), reply.getUser().getUsername(),
+				reply.getId(), reply.getContent())).toList();
+
+		return CommentResponseDto.CommentWithReplyResponseDto.builder()
+			.userId(comment.getUser().getId())
 			.username(comment.getUser().getUsername())
-			.commentId(comment.getId())
-			.content(comment.getContent()).build();
+			.commentId(commentId)
+			.content(comment.getContent())
+			.replies(replies)
+			.build();
 	}
 
 	@Transactional
@@ -68,6 +80,13 @@ public class CommentService {
 		Comment child = new Comment(user, bucketItem, req.getContent(), parent);
 
 		commentRepo.save(child);
+	}
+
+	private CommentResponseDto toCommentResponse(Comment comment) {
+		return CommentResponseDto.builder().userId(comment.getUser().getId())
+			.username(comment.getUser().getUsername())
+			.commentId(comment.getId())
+			.content(comment.getContent()).build();
 	}
 
 }

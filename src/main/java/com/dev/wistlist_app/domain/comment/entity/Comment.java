@@ -1,5 +1,8 @@
 package com.dev.wistlist_app.domain.comment.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dev.wistlist_app.domain.BaseTimeEntity;
 import com.dev.wistlist_app.domain.bucket.entity.BucketItem;
 import com.dev.wistlist_app.domain.users.entity.User;
@@ -12,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,6 +44,9 @@ public class Comment extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String content;
 
+	@OneToMany(mappedBy = "parent")
+	private List<Comment> replies = new ArrayList<>();
+
 	private Comment(User user, BucketItem bucketItem, Comment parent, String content) {
 		this.user = user;
 		this.bucketItem = bucketItem;
@@ -53,7 +60,6 @@ public class Comment extends BaseTimeEntity {
 		this.bucketItem = bucketItem;
 		this.content = content;
 	}
-
 
 	public Comment(User user, BucketItem bucketItem, String content, Comment parent) {
 		this.user = user;
