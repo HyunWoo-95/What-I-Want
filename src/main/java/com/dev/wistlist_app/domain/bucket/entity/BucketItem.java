@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.dev.wistlist_app.domain.BaseTimeEntity;
 import com.dev.wistlist_app.domain.cheer.entity.Cheer;
+import com.dev.wistlist_app.domain.comment.entity.Comment;
 import com.dev.wistlist_app.domain.users.entity.User;
 
 import jakarta.persistence.Column;
@@ -55,6 +56,13 @@ public class BucketItem extends BaseTimeEntity {
 	@OneToMany(mappedBy = "bucketItem")
 	private List<Cheer> cheers = new ArrayList<>();
 
+	@OneToMany(mappedBy = "bcuketItem")
+	private List<Comment> comments = new ArrayList<>();
+
+	private Long cheerCount;
+
+	private Long commentCount;
+
 	private BucketItem(Long id, User user, String content, BucketItemStatus status, LocalDate dueDate,
 		List<Cheer> cheers) {
 		this.id = id;
@@ -73,12 +81,27 @@ public class BucketItem extends BaseTimeEntity {
 		this.dueDate = dueDate;
 	}
 
-
 	public void updateBucketItem(String content) {
 		this.content = content;
 	}
 
 	public void updateBucketItemStatus(BucketItemStatus status) {
 		this.status = status;
+	}
+
+	public void incrementCheerCount() {
+		this.cheerCount = this.cheerCount + 1;
+	}
+
+	public void decrementCheerCount() {
+		this.cheerCount = this.cheerCount - 1;
+	}
+
+	public void incrementCommentCount() {
+		this.commentCount = this.commentCount + 1;
+	}
+
+	public void decrementCommentCount() {
+		this.commentCount = this.commentCount - 1;
 	}
 }

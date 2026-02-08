@@ -20,7 +20,9 @@ public enum ErrorCode {
 
 	UNAUTHENTICATED_USER(HttpStatus.UNAUTHORIZED, "40101", "로그인 후 이용 가능합니다."),
 	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "40102", "해당 요청에 대한 권한이 없습니다."),
-	USER_PROFILE_NOT_EXISTS(HttpStatus.NOT_FOUND, "40406", "사용자의 프로필이 존재하지 않습니다");
+	USER_PROFILE_NOT_EXISTS(HttpStatus.NOT_FOUND, "40406", "사용자의 프로필이 존재하지 않습니다"), COMMENT_NOT_FOUND(
+		HttpStatus.NOT_FOUND, "40406", "댓글을 작성할 수 없습니다."
+	);
 
 	private final HttpStatus httpStatus;
 	private final String code;

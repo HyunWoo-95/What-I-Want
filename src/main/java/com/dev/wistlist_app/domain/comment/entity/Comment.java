@@ -1,0 +1,64 @@
+package com.dev.wistlist_app.domain.comment.entity;
+
+import com.dev.wistlist_app.domain.BaseTimeEntity;
+import com.dev.wistlist_app.domain.bucket.entity.BucketItem;
+import com.dev.wistlist_app.domain.users.entity.User;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Comment extends BaseTimeEntity {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "bucket_item_id", nullable = false)
+	private BucketItem bucketItem;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "parent_id")
+	private Comment parent; // 대댓글
+	@Column(nullable = false)
+	private String content;
+
+	private Comment(User user, BucketItem bucketItem, Comment parent, String content) {
+		this.user = user;
+		this.bucketItem = bucketItem;
+		this.parent = parent;
+		this.content = content;
+	}
+
+	@Builder
+	public Comment(User user, BucketItem bucketItem, String content) {
+		this.user = user;
+		this.bucketItem = bucketItem;
+		this.content = content;
+	}
+
+
+	public Comment(User user, BucketItem bucketItem, String content, Comment parent) {
+		this.user = user;
+		this.bucketItem = bucketItem;
+		this.content = content;
+		this.parent = parent;
+	}
+}
