@@ -36,23 +36,13 @@ public class CommentService {
 	}
 
 	@Transactional(readOnly = true)
-	public CommentResponseDto.CommentWithReplyResponseDto getComment(Long bucketId, Long commentId) {
+	public CommentResponseDto getComment(Long bucketId, Long commentId) {
 		BucketItem bucketItem = bucketRepo.findById(bucketId).orElseThrow(() ->
 			new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
 
 		Comment comment = commentRepo.findByIdAndBucketItem(commentId, bucketItem);
 
-		List<CommentResponseDto.ReplyResponseDto> replies = comment.getReplies().stream().map(reply ->
-			new CommentResponseDto.ReplyResponseDto(reply.getUser().getId(), reply.getUser().getUsername(),
-				reply.getId(), reply.getContent())).toList();
-
-		return CommentResponseDto.CommentWithReplyResponseDto.builder()
-			.userId(comment.getUser().getId())
-			.username(comment.getUser().getUsername())
-			.commentId(commentId)
-			.content(comment.getContent())
-			.replies(replies)
-			.build();
+		return toCommentResponse(comment);
 	}
 
 	@Transactional
@@ -67,26 +57,14 @@ public class CommentService {
 		bucketItem.incrementCheerCount();
 	}
 
-	@Transactional
-	public void createChildComment(Long userId, Long bucketId, Long parentId, CommentRequestDto req) {
-		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
-
-		BucketItem bucketItem = bucketRepo.findById(bucketId).orElseThrow(() ->
-			new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
-
-		Comment parent = commentRepo.findById(parentId)
-			.orElseThrow(() -> new GlobalException(ErrorCode.COMMENT_NOT_FOUND));
-
-		Comment child = new Comment(user, bucketItem, req.getContent(), parent);
-
-		commentRepo.save(child);
-	}
-
 	private CommentResponseDto toCommentResponse(Comment comment) {
 		return CommentResponseDto.builder().userId(comment.getUser().getId())
 			.username(comment.getUser().getUsername())
 			.commentId(comment.getId())
-			.content(comment.getContent()).build();
+			.content(comment.getContent())
+			.createdAt(comment.getCreatedAt())
+			.updatedAt(comment.getUpdatedAt())
+			.build();
 	}
 
 }

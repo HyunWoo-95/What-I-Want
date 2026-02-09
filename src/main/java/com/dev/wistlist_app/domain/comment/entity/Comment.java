@@ -15,7 +15,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,19 +37,13 @@ public class Comment extends BaseTimeEntity {
 	@JoinColumn(name = "bucket_item_id", nullable = false)
 	private BucketItem bucketItem;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "parent_id")
-	private Comment parent; // 대댓글
 	@Column(nullable = false)
 	private String content;
 
-	@OneToMany(mappedBy = "parent")
-	private List<Comment> replies = new ArrayList<>();
-
-	private Comment(User user, BucketItem bucketItem, Comment parent, String content) {
+	private Comment(Long id, User user, BucketItem bucketItem, String content) {
+		this.id = id;
 		this.user = user;
 		this.bucketItem = bucketItem;
-		this.parent = parent;
 		this.content = content;
 	}
 
@@ -61,10 +54,4 @@ public class Comment extends BaseTimeEntity {
 		this.content = content;
 	}
 
-	public Comment(User user, BucketItem bucketItem, String content, Comment parent) {
-		this.user = user;
-		this.bucketItem = bucketItem;
-		this.content = content;
-		this.parent = parent;
-	}
 }

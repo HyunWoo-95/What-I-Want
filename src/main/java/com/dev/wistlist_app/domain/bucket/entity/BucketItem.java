@@ -56,7 +56,7 @@ public class BucketItem extends BaseTimeEntity {
 	@OneToMany(mappedBy = "bucketItem")
 	private List<Cheer> cheers = new ArrayList<>();
 
-	@OneToMany(mappedBy = "bcuketItem")
+	@OneToMany(mappedBy = "bucketItem")
 	private List<Comment> comments = new ArrayList<>();
 
 	private Long cheerCount;
