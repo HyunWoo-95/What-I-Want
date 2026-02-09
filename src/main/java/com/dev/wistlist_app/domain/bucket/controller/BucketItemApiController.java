@@ -16,6 +16,9 @@ import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemStatusR
 import com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.BucketItemResponse;
 import com.dev.wistlist_app.domain.bucket.service.BucketItemService;
 import com.dev.wistlist_app.domain.cheer.service.CheerService;
+import com.dev.wistlist_app.domain.comment.dto.CommentRequestDto;
+import com.dev.wistlist_app.domain.comment.dto.CommentResponseDto;
+import com.dev.wistlist_app.domain.comment.service.CommentService;
 import com.dev.wistlist_app.global.annotation.Login;
 import com.dev.wistlist_app.global.response.ApiResponse;
 
@@ -29,6 +32,7 @@ public class BucketItemApiController {
 
 	private final BucketItemService bucketItemService;
 	private final CheerService cheerService;
+	private final CommentService commentService;
 
 	@GetMapping
 	public ApiResponse<List<BucketItemResponse>> getAllBucketItems() {
@@ -38,13 +42,13 @@ public class BucketItemApiController {
 	@GetMapping("/{bucketId}")
 	public ApiResponse<BucketItemResponse> getMyBucketItem(@Login Long userId,
 		@PathVariable Long bucketId) {
-		return ApiResponse.success(bucketItemService.getMyBucketItem(userId , bucketId));
+		return ApiResponse.success(bucketItemService.getMyBucketItem(userId, bucketId));
 	}
 
 	@PostMapping
-	public void createBucketItem(@Login Long userId,  @RequestBody @Valid
+	public void createBucketItem(@Login Long userId, @RequestBody @Valid
 	BucketItemCreateRequest request) {
-		bucketItemService.createBucketItem(userId,  request);
+		bucketItemService.createBucketItem(userId, request);
 	}
 
 	@PatchMapping("/{bucketId}")
@@ -62,7 +66,7 @@ public class BucketItemApiController {
 
 	@DeleteMapping("/{bucketId}")
 	public void deleteMyBucketItem(@Login Long userId, @PathVariable Long bucketId) {
-		bucketItemService.deleteMyBucketItem(userId,  bucketId);
+		bucketItemService.deleteMyBucketItem(userId, bucketId);
 	}
 
 	@PostMapping("/{bucketId}/cheers")
@@ -73,5 +77,31 @@ public class BucketItemApiController {
 	@DeleteMapping("/{bucketId}/cheers")
 	public void deleteCheer(@Login Long userId, @PathVariable Long bucketId) {
 		cheerService.deleteCheer(userId, bucketId);
+	}
+
+	@GetMapping("/{bucketId}/comments")
+	public ApiResponse<List<CommentResponseDto>> getComments(@PathVariable Long bucketId) {
+		return ApiResponse.success(commentService.getComments(bucketId));
+	}
+
+	@GetMapping("/{bucketId}/comments/{commentId}")
+	public ApiResponse<CommentResponseDto> getComment(@PathVariable Long bucketId, @PathVariable Long commentId) {
+		return ApiResponse.success(commentService.getComment(bucketId, commentId));
+	}
+
+	@PostMapping("/{bucketId}/comments")
+	public void createComment(@Login Long userId, @PathVariable Long bucketId, @RequestBody CommentRequestDto req) {
+		commentService.createComment(userId, bucketId, req);
+	}
+
+	@PatchMapping("/{bucketId}/comments/{commentId}")
+	public void createComment(@Login Long userId, @PathVariable Long bucketId, @PathVariable Long commentId,
+		@RequestBody CommentRequestDto req) {
+		commentService.updateComment(userId, bucketId, commentId, req);
+	}
+
+	@DeleteMapping("/{bucketId}/comments/{commentId}")
+	public void createComment(@Login Long userId, @PathVariable Long bucketId, @PathVariable Long commentId) {
+		commentService.deleteComment(userId, bucketId, commentId);
 	}
 }

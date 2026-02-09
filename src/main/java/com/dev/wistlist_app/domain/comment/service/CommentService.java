@@ -36,23 +36,14 @@ public class CommentService {
 	}
 
 	@Transactional(readOnly = true)
-	public CommentResponseDto.CommentWithReplyResponseDto getComment(Long bucketId, Long commentId) {
+	public CommentResponseDto getComment(Long bucketId, Long commentId) {
 		BucketItem bucketItem = bucketRepo.findById(bucketId).orElseThrow(() ->
 			new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
 
-		Comment comment = commentRepo.findByIdAndBucketItem(commentId, bucketItem);
+		Comment comment = commentRepo.findByIdAndBucketItem(commentId, bucketItem)
+			.orElseThrow(() -> new GlobalException(ErrorCode.COMMENT_NOT_FOUND));
 
-		List<CommentResponseDto.ReplyResponseDto> replies = comment.getReplies().stream().map(reply ->
-			new CommentResponseDto.ReplyResponseDto(reply.getUser().getId(), reply.getUser().getUsername(),
-				reply.getId(), reply.getContent())).toList();
-
-		return CommentResponseDto.CommentWithReplyResponseDto.builder()
-			.userId(comment.getUser().getId())
-			.username(comment.getUser().getUsername())
-			.commentId(commentId)
-			.content(comment.getContent())
-			.replies(replies)
-			.build();
+		return toCommentResponse(comment);
 	}
 
 	@Transactional
@@ -68,25 +59,40 @@ public class CommentService {
 	}
 
 	@Transactional
-	public void createChildComment(Long userId, Long bucketId, Long parentId, CommentRequestDto req) {
+	public void updateComment(Long userId, Long bucketId, Long commentId, CommentRequestDto req) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		BucketItem bucketItem = bucketRepo.findById(bucketId).orElseThrow(() ->
 			new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
-
-		Comment parent = commentRepo.findById(parentId)
+		Comment comment = commentRepo.findByIdAndBucketItem(commentId, bucketItem)
 			.orElseThrow(() -> new GlobalException(ErrorCode.COMMENT_NOT_FOUND));
+		if (!comment.getUser().getId().equals(user.getId())) {
+			throw new GlobalException(ErrorCode.UNAUTHENTICATED_USER);
+		}
+		comment.updateContent(req.getContent());
+	}
 
-		Comment child = new Comment(user, bucketItem, req.getContent(), parent);
-
-		commentRepo.save(child);
+	@Transactional
+	public void deleteComment(Long userId, Long bucketId, Long commentId) {
+		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
+		BucketItem bucketItem = bucketRepo.findById(bucketId).orElseThrow(() ->
+			new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
+		Comment comment = commentRepo.findByIdAndBucketItem(commentId, bucketItem)
+			.orElseThrow(() -> new GlobalException(ErrorCode.COMMENT_NOT_FOUND));
+		if (!comment.getUser().getId().equals(user.getId())) {
+			throw new GlobalException(ErrorCode.UNAUTHENTICATED_USER);
+		}
+		commentRepo.delete(comment);
 	}
 
 	private CommentResponseDto toCommentResponse(Comment comment) {
 		return CommentResponseDto.builder().userId(comment.getUser().getId())
 			.username(comment.getUser().getUsername())
 			.commentId(comment.getId())
-			.content(comment.getContent()).build();
+			.content(comment.getContent())
+			.createdAt(comment.getCreatedAt())
+			.updatedAt(comment.getUpdatedAt())
+			.build();
 	}
 
 }
