@@ -95,13 +95,13 @@ public class BucketItemApiController {
 	}
 
 	@PatchMapping("/{bucketId}/comments/{commentId}")
-	public void createComment(@Login Long userId, @PathVariable Long bucketId, @PathVariable Long commentId,
+	public void updateComment(@Login Long userId, @PathVariable Long bucketId, @PathVariable Long commentId,
 		@RequestBody CommentRequestDto req) {
 		commentService.updateComment(userId, bucketId, commentId, req);
 	}
 
 	@DeleteMapping("/{bucketId}/comments/{commentId}")
-	public void createComment(@Login Long userId, @PathVariable Long bucketId, @PathVariable Long commentId) {
+	public void deleteComment(@Login Long userId, @PathVariable Long bucketId, @PathVariable Long commentId) {
 		commentService.deleteComment(userId, bucketId, commentId);
 	}
 }
