@@ -42,5 +42,6 @@ public class CheerService {
 			.orElseThrow(() -> new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
 		Cheer cheer = create(user, bucketItem);
 		cheerRepo.delete(cheer);
+		bucketItem.decrementCheerCount();
 	}
 }

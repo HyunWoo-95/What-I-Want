@@ -114,6 +114,8 @@ public class BucketItemService {
 					.bucketId(bucketItem.getId())
 					.content(bucketItem.getContent())
 					.status(bucketItem.getStatus())
+					.cheerCount(bucketItem.getCheerCount())
+					.commentCount(bucketItem.getCommentCount())
 					.createdAt(bucketItem.getCreatedAt())
 					.updatedAt(bucketItem.getUpdatedAt())
 					.build()
@@ -122,7 +124,7 @@ public class BucketItemService {
 		return res;
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public Page<BucketItemResponse> getAllBuckItemPageBySearch(String content, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		Page<BucketItem> bucketItems = bucketRepo.searchBucketItems(content, pageable);
@@ -137,6 +139,8 @@ public class BucketItemService {
 			.bucketId(bucketItem.getId())
 			.content(bucketItem.getContent())
 			.status(bucketItem.getStatus())
+			.cheerCount(bucketItem.getCheerCount())
+			.commentCount(bucketItem.getCommentCount())
 			.createdAt(bucketItem.getCreatedAt())
 			.updatedAt(bucketItem.getUpdatedAt())
 			.build();

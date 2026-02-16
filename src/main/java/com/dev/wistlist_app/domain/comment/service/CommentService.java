@@ -83,6 +83,7 @@ public class CommentService {
 			throw new GlobalException(ErrorCode.UNAUTHENTICATED_USER);
 		}
 		commentRepo.delete(comment);
+		bucketItem.decrementCommentCount();
 	}
 
 	private CommentResponseDto toCommentResponse(Comment comment) {
