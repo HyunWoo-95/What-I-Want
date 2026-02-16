@@ -45,9 +45,6 @@ public class BucketItem extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String content;
 
-	@Column(nullable = true)
-	private String tags;
-
 	@Enumerated(value = EnumType.STRING)
 	private BucketItemStatus status;
 
@@ -74,9 +71,10 @@ public class BucketItem extends BaseTimeEntity {
 	}
 
 	@Builder
-	public BucketItem(User user, String content, LocalDate dueDate) {
+	public BucketItem(User user, String content, BucketCategory category, LocalDate dueDate) {
 		this.user = user;
 		this.content = content;
+		this.category = category;
 		this.status = BucketItemStatus.OPEN;
 		this.dueDate = dueDate;
 	}

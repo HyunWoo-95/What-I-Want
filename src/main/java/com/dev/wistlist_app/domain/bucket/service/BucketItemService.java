@@ -35,6 +35,7 @@ public class BucketItemService {
 		BucketItem bucketItem = BucketItem.builder()
 			.user(user)
 			.content(request.getContent())
+			.category(request.getBucketCategory())
 			.dueDate(request.getDueDate())
 			.build();
 		bucketRepo.save(bucketItem);
@@ -125,11 +126,10 @@ public class BucketItemService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<BucketItemResponse> getAllBuckItemPageBySearch(String content, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		Page<BucketItem> bucketItems = bucketRepo.searchBucketItems(content, pageable);
+	public List<BucketItemResponse> getAllBuckItemPageBySearch(String content) {
+		List<BucketItem> bucketItems = bucketRepo.searchBucketItems(content);
 
-		return bucketItems.map(this::toBucketItemResponse);
+		return bucketItems.stream().map(this::toBucketItemResponse).toList();
 	}
 
 	private BucketItemResponse toBucketItemResponse(BucketItem bucketItem) {

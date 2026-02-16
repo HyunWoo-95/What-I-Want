@@ -23,11 +23,7 @@ public interface BucketItemRepository extends JpaRepository<BucketItem, Long> {
 	List<BucketItem> searchBucketItems(
 		@Param("content") String content);
 
-	@Query("SELECT bi FROM BucketItem bi " +
-		"WHERE (:content IS NULL OR LOWER(bi.content) LIKE LOWER(CONCAT('%', :content, '%'))) " +
-		"ORDER BY bi.createdAt DESC")
-	Page<BucketItem> searchBucketItems(@Param("content") String content,
-		Pageable pageable);
+
 
 	List<BucketItem> findAllByUser(User user);
 
