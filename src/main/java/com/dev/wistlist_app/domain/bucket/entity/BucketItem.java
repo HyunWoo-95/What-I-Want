@@ -8,6 +8,7 @@ import com.dev.wistlist_app.domain.BaseTimeEntity;
 import com.dev.wistlist_app.domain.cheer.entity.Cheer;
 import com.dev.wistlist_app.domain.comment.entity.Comment;
 import com.dev.wistlist_app.domain.users.entity.User;
+import com.dev.wistlist_app.domain.users.entity.UserProfile;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,9 +35,9 @@ public class BucketItem extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "profile_id")
 	@ManyToOne(fetch = FetchType.LAZY)
-	private User user;
+	private UserProfile profile;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -60,10 +61,10 @@ public class BucketItem extends BaseTimeEntity {
 
 	private Long commentCount;
 
-	private BucketItem(Long id, User user, String content, BucketItemStatus status, LocalDate dueDate,
+	private BucketItem(Long id, UserProfile profile, String content, BucketItemStatus status, LocalDate dueDate,
 		List<Cheer> cheers) {
 		this.id = id;
-		this.user = user;
+		this.profile = profile;
 		this.content = content;
 		this.status = status;
 		this.dueDate = dueDate;
@@ -71,8 +72,8 @@ public class BucketItem extends BaseTimeEntity {
 	}
 
 	@Builder
-	public BucketItem(User user, String content, BucketCategory category, LocalDate dueDate) {
-		this.user = user;
+	public BucketItem(UserProfile profile, String content, BucketCategory category, LocalDate dueDate) {
+		this.profile = profile;
 		this.content = content;
 		this.category = category;
 		this.status = BucketItemStatus.OPEN;

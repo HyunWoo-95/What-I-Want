@@ -3,6 +3,7 @@ package com.dev.wistlist_app.domain.cheer.entity;
 import com.dev.wistlist_app.domain.BaseTimeEntity;
 import com.dev.wistlist_app.domain.bucket.entity.BucketItem;
 import com.dev.wistlist_app.domain.users.entity.User;
+import com.dev.wistlist_app.domain.users.entity.UserProfile;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,21 +26,16 @@ public class Cheer extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "profile_id")
 	@ManyToOne(fetch = FetchType.LAZY)
-	private User user;
+	private UserProfile profile;
 
 	@JoinColumn(name = "bucket_item_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private BucketItem bucketItem;
 
-	private Cheer(User user, BucketItem bucketItem) {
-		this.user = user;
+	public Cheer(UserProfile profile, BucketItem bucketItem) {
+		this.profile = profile;
 		this.bucketItem = bucketItem;
 	}
-
-	public static Cheer create(User user, BucketItem bucketItem) {
-		return new Cheer(user, bucketItem);
-	}
-
 }
