@@ -35,6 +35,6 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addInterceptor(loginCheckInterceptor)
 			.addPathPatterns("/**")
 			.excludePathPatterns("/error", "/api/v1/users/join", "/api/v1/users/login"
-				, "/api/v1/bucket-items/search");
+				, "/api/v1/bucket-items/search","/api/v1/bucket-items");
 	}
 }
