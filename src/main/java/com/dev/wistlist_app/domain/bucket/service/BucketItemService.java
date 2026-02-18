@@ -5,13 +5,12 @@ import static com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dev.wistlist_app.domain.users.entity.User;
+import com.dev.wistlist_app.domain.users.entity.UserProfile;
+import com.dev.wistlist_app.domain.users.repository.UserProfileRepository;
 import com.dev.wistlist_app.domain.users.repository.UserRepository;
 import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemCreateRequest;
 import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemStatusRequest;
@@ -27,13 +26,16 @@ import lombok.RequiredArgsConstructor;
 public class BucketItemService {
 	private final BucketItemRepository bucketRepo;
 	private final UserRepository userRepo;
+	private final UserProfileRepository profileRepo;
 
 	@Transactional
 	public void createBucketItem(Long userId, BucketItemCreateRequest request) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
+		UserProfile profile = profileRepo.findByUser(user)
+			.orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
 		BucketItem bucketItem = BucketItem.builder()
-			.user(user)
+			.profile(profile)
 			.content(request.getContent())
 			.category(request.getBucketCategory())
 			.dueDate(request.getDueDate())
@@ -44,8 +46,9 @@ public class BucketItemService {
 	@Transactional(readOnly = true)
 	public List<BucketItemResponse> getMyBucketItemList(Long userId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
-
-		List<BucketItem> items = bucketRepo.findAllByUser(user);
+		UserProfile profile = profileRepo.findByUser(user)
+			.orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
+		List<BucketItem> items = bucketRepo.findAllByProfile(profile);
 		List<BucketItemResponse> res = new ArrayList<>();
 		for (BucketItem bucketItem : items) {
 			res.add(BucketItemResponse.builder()
@@ -60,13 +63,14 @@ public class BucketItemService {
 	@Transactional(readOnly = true)
 	public BucketItemResponse getMyBucketItem(Long userId, Long bucketId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
-
-		BucketItem bucketItem = bucketRepo.findByIdAndUser(bucketId, user).orElseThrow(() ->
+		UserProfile profile = profileRepo.findByUser(user)
+			.orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
+		BucketItem bucketItem = bucketRepo.findByIdAndProfile(bucketId, profile).orElseThrow(() ->
 			new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
 
 		return BucketItemResponse.builder()
-			.userId(userId)
-			.username(bucketItem.getUser().getUsername())
+			.profileId(bucketItem.getProfile().getId())
+			.nickname(bucketItem.getProfile().getNickname())
 			.content(bucketItem.getContent())
 			.status(bucketItem.getStatus())
 			.dueDate(bucketItem.getDueDate())
@@ -78,8 +82,9 @@ public class BucketItemService {
 	@Transactional
 	public void updateBucketItem(Long userId, Long bucketId, BucketItemCreateRequest request) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
-
-		BucketItem bucketItem = bucketRepo.findByIdAndUser(bucketId, user).orElseThrow(() ->
+		UserProfile profile = profileRepo.findByUser(user)
+			.orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
+		BucketItem bucketItem = bucketRepo.findByIdAndProfile(bucketId, profile).orElseThrow(() ->
 			new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
 
 		bucketItem.updateBucketItem(request.getContent());
@@ -88,7 +93,9 @@ public class BucketItemService {
 	@Transactional
 	public void updateBucketItemStatus(Long userId, Long bucketId, BucketItemStatusRequest request) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
-		BucketItem bucketItem = bucketRepo.findByIdAndUser(bucketId, user)
+		UserProfile profile = profileRepo.findByUser(user)
+			.orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
+		BucketItem bucketItem = bucketRepo.findByIdAndProfile(bucketId, profile)
 			.orElseThrow(() -> new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
 		bucketItem.updateBucketItemStatus(request.getStatus());
 	}
@@ -96,8 +103,10 @@ public class BucketItemService {
 	@Transactional
 	public void deleteMyBucketItem(Long userId, Long bucketId) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
+		UserProfile profile = profileRepo.findByUser(user)
+			.orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
-		if (!bucketRepo.existsByIdAndUser(bucketId, user)) {
+		if (!bucketRepo.existsByIdAndProfile(bucketId, profile)) {
 			throw new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND);
 		}
 		bucketRepo.deleteById(bucketId);
@@ -110,8 +119,8 @@ public class BucketItemService {
 		for (BucketItem bucketItem : bucketItems) {
 			res.add(
 				BucketItemResponse.builder()
-					.userId(bucketItem.getUser().getId())
-					.username(bucketItem.getUser().getUsername())
+					.profileId(bucketItem.getProfile().getId())
+					.nickname(bucketItem.getProfile().getNickname())
 					.bucketId(bucketItem.getId())
 					.content(bucketItem.getContent())
 					.status(bucketItem.getStatus())
@@ -134,8 +143,8 @@ public class BucketItemService {
 
 	private BucketItemResponse toBucketItemResponse(BucketItem bucketItem) {
 		return BucketItemResponse.builder()
-			.userId(bucketItem.getUser().getId())
-			.username(bucketItem.getUser().getUsername())
+			.profileId(bucketItem.getProfile().getId())
+			.nickname(bucketItem.getProfile().getNickname())
 			.bucketId(bucketItem.getId())
 			.content(bucketItem.getContent())
 			.status(bucketItem.getStatus())

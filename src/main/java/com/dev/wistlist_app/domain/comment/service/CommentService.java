@@ -55,7 +55,7 @@ public class CommentService {
 
 		Comment comment = Comment.builder().user(user).bucketItem(bucketItem).content(req.getContent()).build();
 		commentRepo.save(comment);
-		bucketItem.incrementCheerCount();
+		bucketItem.incrementCommentCount();
 	}
 
 	@Transactional

@@ -17,8 +17,8 @@ public class BucketResponseDto {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	public static class BucketItemResponse {
-		private Long userId;
-		private String username;
+		private Long profileId;
+		private String nickname;
 		private Long bucketId;
 		private String content;
 		private BucketItemStatus status;

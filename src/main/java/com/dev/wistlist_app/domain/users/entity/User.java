@@ -1,10 +1,11 @@
 package com.dev.wistlist_app.domain.users.entity;
 
-
 import com.dev.wistlist_app.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,6 +32,8 @@ public class User extends BaseTimeEntity {
 	private String email;
 	@Column(nullable = false)
 	private String password;
+	@Enumerated(EnumType.STRING)
+	private UserRole role;
 
 	private User(Long id, String username, String email, String password) {
 		this.id = id;
@@ -44,5 +47,6 @@ public class User extends BaseTimeEntity {
 		this.username = username;
 		this.email = email;
 		this.password = password;
+		this.role = UserRole.USER;
 	}
 }
