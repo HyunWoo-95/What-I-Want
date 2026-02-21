@@ -37,6 +37,7 @@ public class CheerService {
 			.orElseThrow(() -> new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND));
 
 		cheerRepo.save(new Cheer(profile, bucketItem));
+		bucketItem.incrementCheerCount();
 	}
 
 	@Transactional
