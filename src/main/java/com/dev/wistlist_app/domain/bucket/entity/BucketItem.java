@@ -6,8 +6,11 @@ import java.util.List;
 
 import com.dev.wistlist_app.domain.BaseTimeEntity;
 import com.dev.wistlist_app.domain.cheer.entity.Cheer;
+import com.dev.wistlist_app.domain.comment.entity.Comment;
 import com.dev.wistlist_app.domain.users.entity.User;
+import com.dev.wistlist_app.domain.users.entity.UserProfile;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -32,14 +35,15 @@ public class BucketItem extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "profile_id")
 	@ManyToOne(fetch = FetchType.LAZY)
-	private User user;
+	private UserProfile profile;
 
-	@JoinColumn(name = "list_id")
-	@ManyToOne(fetch = FetchType.LAZY)
-	private BucketList bucketList;
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private BucketCategory category;
 
+	@Column(nullable = false)
 	private String content;
 
 	@Enumerated(value = EnumType.STRING)
@@ -50,10 +54,17 @@ public class BucketItem extends BaseTimeEntity {
 	@OneToMany(mappedBy = "bucketItem")
 	private List<Cheer> cheers = new ArrayList<>();
 
-	private BucketItem(Long id,User user, BucketList bucketList, String content, BucketItemStatus status, LocalDate dueDate ,List<Cheer> cheers) {
+	@OneToMany(mappedBy = "bucketItem")
+	private List<Comment> comments = new ArrayList<>();
+
+	private Long cheerCount;
+
+	private Long commentCount;
+
+	private BucketItem(Long id, UserProfile profile, String content, BucketItemStatus status, LocalDate dueDate,
+		List<Cheer> cheers) {
 		this.id = id;
-		this.user = user;
-		this.bucketList = bucketList;
+		this.profile = profile;
 		this.content = content;
 		this.status = status;
 		this.dueDate = dueDate;
@@ -61,10 +72,10 @@ public class BucketItem extends BaseTimeEntity {
 	}
 
 	@Builder
-	public BucketItem(User user, BucketList bucketList, String content, LocalDate dueDate) {
-		this.user = user;
-		this.bucketList = bucketList;
+	public BucketItem(UserProfile profile, String content, BucketCategory category, LocalDate dueDate) {
+		this.profile = profile;
 		this.content = content;
+		this.category = category;
 		this.status = BucketItemStatus.OPEN;
 		this.dueDate = dueDate;
 	}
@@ -73,7 +84,23 @@ public class BucketItem extends BaseTimeEntity {
 		this.content = content;
 	}
 
-	public void updatebucketItemStatus(BucketItemStatus status) {
+	public void updateBucketItemStatus(BucketItemStatus status) {
 		this.status = status;
+	}
+
+	public void incrementCheerCount() {
+		this.cheerCount = this.cheerCount + 1;
+	}
+
+	public void decrementCheerCount() {
+		this.cheerCount = this.cheerCount - 1;
+	}
+
+	public void incrementCommentCount() {
+		this.commentCount = this.commentCount + 1;
+	}
+
+	public void decrementCommentCount() {
+		this.commentCount = this.commentCount - 1;
 	}
 }

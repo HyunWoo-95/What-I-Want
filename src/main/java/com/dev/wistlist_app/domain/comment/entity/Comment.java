@@ -1,10 +1,13 @@
-package com.dev.wistlist_app.domain.cheer.entity;
+package com.dev.wistlist_app.domain.comment.entity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.dev.wistlist_app.domain.BaseTimeEntity;
 import com.dev.wistlist_app.domain.bucket.entity.BucketItem;
 import com.dev.wistlist_app.domain.users.entity.User;
-import com.dev.wistlist_app.domain.users.entity.UserProfile;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -12,30 +15,46 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "cheers")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Cheer extends BaseTimeEntity {
+public class Comment extends BaseTimeEntity {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@JoinColumn(name = "profile_id")
 	@ManyToOne(fetch = FetchType.LAZY)
-	private UserProfile profile;
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
-	@JoinColumn(name = "bucket_item_id")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "bucket_item_id", nullable = false)
 	private BucketItem bucketItem;
 
-	public Cheer(UserProfile profile, BucketItem bucketItem) {
-		this.profile = profile;
+	@Column(nullable = false)
+	private String content;
+
+	private Comment(Long id, User user, BucketItem bucketItem, String content) {
+		this.id = id;
+		this.user = user;
 		this.bucketItem = bucketItem;
+		this.content = content;
+	}
+
+	@Builder
+	public Comment(User user, BucketItem bucketItem, String content) {
+		this.user = user;
+		this.bucketItem = bucketItem;
+		this.content = content;
+	}
+
+	public void updateContent(String content) {
+		this.content = content;
 	}
 }

@@ -5,7 +5,7 @@ import static com.dev.wistlist_app.domain.users.dto.UserRequestDto.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dev.wistlist_app.domain.users.dto.UserResponseDto.ProfileRespone;
+import com.dev.wistlist_app.domain.users.dto.UserResponseDto.ProfileResponse;
 import com.dev.wistlist_app.domain.users.entity.UserProfile;
 import com.dev.wistlist_app.domain.users.repository.UserProfileRepository;
 import com.dev.wistlist_app.domain.users.repository.UserRepository;
@@ -40,7 +40,7 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public ProfileRespone getProfile(Long userId) {
+	public ProfileResponse getMyProfile(Long userId) {
 		User user = userRepo.findById(userId).orElseThrow(
 			() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 
@@ -48,9 +48,10 @@ public class UserService {
 			-> new GlobalException(ErrorCode.PROFILE_NOT_EXIST)
 		);
 
-		return new ProfileRespone(
+		return new ProfileResponse(
 			profile.getNickname(),
 			profile.getInterest(),
+			profile.getProfileUrl(),
 			profile.getCreatedAt()
 		);
 	}
@@ -64,5 +65,31 @@ public class UserService {
 			.interest(req.getInterest().getName())
 			.build();
 		profileRepo.save(profile);
+	}
+
+	@Transactional
+	public String updateProfileImg(Long userId, String profileImgUrl) {
+		User user = userRepo.findById(userId).orElseThrow(
+			() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
+
+		UserProfile profile = profileRepo.findByUser(user).orElseThrow(()
+			-> new GlobalException(ErrorCode.PROFILE_NOT_EXIST)
+		);
+		return profile.updateProfileUrl(profileImgUrl);
+	}
+
+
+	@Transactional(readOnly = true)
+	public ProfileResponse getProfile(Long profileId) {
+		UserProfile profile = profileRepo.findById(profileId).orElseThrow(()
+			-> new GlobalException(ErrorCode.PROFILE_NOT_EXIST)
+		);
+
+		return new ProfileResponse(
+			profile.getNickname(),
+			profile.getInterest(),
+			profile.getProfileUrl(),
+			profile.getCreatedAt()
+		);
 	}
 }
