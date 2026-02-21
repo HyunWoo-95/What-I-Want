@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.dev.wistlist_app.global.annotation.LoginUserArgumentResolver;
 import com.dev.wistlist_app.global.interceptor.LoginCheckInterceptor;
+import com.dev.wistlist_app.global.interceptor.PerformanceInterceptor;
 import com.dev.wistlist_app.global.interceptor.RequestLogInterceptor;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
 	private final LoginCheckInterceptor loginCheckInterceptor;
 	private final LoginUserArgumentResolver loginUserArgumentResolver;
 	private final RequestLogInterceptor requestLogInterceptor;
+	private final PerformanceInterceptor performanceInterceptor;
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
@@ -35,6 +37,8 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addInterceptor(loginCheckInterceptor)
 			.addPathPatterns("/**")
 			.excludePathPatterns("/error", "/api/v1/users/join", "/api/v1/users/login"
-				, "/api/v1/bucket-items/search","/api/v1/bucket-items");
+				, "/api/v1/bucket-items/search", "/api/v1/bucket-items");
+		registry.addInterceptor(performanceInterceptor)
+			.addPathPatterns("/api/v1/bucket-items", "/api/v1/bucket-items/search");
 	}
 }
