@@ -5,6 +5,8 @@ import static com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,20 +46,26 @@ public class BucketItemService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<BucketItemResponse> getMyBucketItemList(Long userId) {
+	public Page<BucketItemResponse> getAllBucketItems(Pageable pageable) {
+		Page<BucketItem> bucketItems = bucketRepo.findAll(pageable);
+
+		return bucketItems.map(BucketItemResponse::new);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<BucketItemResponse> getAllBuckItemPageBySearch(String content, Pageable pageable) {
+		Page<BucketItem> bucketItems = bucketRepo.searchBucketItems(content, pageable);
+
+		return bucketItems.map(BucketItemResponse::new);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<BucketItemResponse> getMyBucketItemList(Long userId, Pageable pageable) {
 		User user = userRepo.findById(userId).orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
 		UserProfile profile = profileRepo.findByUser(user)
 			.orElseThrow(() -> new GlobalException(ErrorCode.USER_NOT_FOUND));
-		List<BucketItem> items = bucketRepo.findAllByProfile(profile);
-		List<BucketItemResponse> res = new ArrayList<>();
-		for (BucketItem bucketItem : items) {
-			res.add(BucketItemResponse.builder()
-				.bucketId(bucketItem.getId())
-				.content(bucketItem.getContent())
-				.createdAt(bucketItem.getCreatedAt())
-				.build());
-		}
-		return res;
+		Page<BucketItem> items = bucketRepo.findAllByProfile(profile, pageable);
+		return items.map(BucketItemResponse::new);
 	}
 
 	@Transactional(readOnly = true)
@@ -73,7 +81,6 @@ public class BucketItemService {
 			.nickname(bucketItem.getProfile().getNickname())
 			.content(bucketItem.getContent())
 			.status(bucketItem.getStatus())
-			.dueDate(bucketItem.getDueDate())
 			.createdAt(bucketItem.getCreatedAt())
 			.updatedAt(bucketItem.getUpdatedAt())
 			.build();
@@ -110,48 +117,5 @@ public class BucketItemService {
 			throw new GlobalException(ErrorCode.BUCKETITEM_NOT_FOUND);
 		}
 		bucketRepo.deleteById(bucketId);
-	}
-
-	@Transactional(readOnly = true)
-	public List<BucketItemResponse> getAllBucketItems() {
-		List<BucketItem> bucketItems = bucketRepo.findAll();
-		List<BucketItemResponse> res = new ArrayList<>();
-		for (BucketItem bucketItem : bucketItems) {
-			res.add(
-				BucketItemResponse.builder()
-					.profileId(bucketItem.getProfile().getId())
-					.nickname(bucketItem.getProfile().getNickname())
-					.bucketId(bucketItem.getId())
-					.content(bucketItem.getContent())
-					.status(bucketItem.getStatus())
-					.cheerCount(bucketItem.getCheerCount())
-					.commentCount(bucketItem.getCommentCount())
-					.createdAt(bucketItem.getCreatedAt())
-					.updatedAt(bucketItem.getUpdatedAt())
-					.build()
-			);
-		}
-		return res;
-	}
-
-	@Transactional(readOnly = true)
-	public List<BucketItemResponse> getAllBuckItemPageBySearch(String content) {
-		List<BucketItem> bucketItems = bucketRepo.searchBucketItems(content);
-
-		return bucketItems.stream().map(this::toBucketItemResponse).toList();
-	}
-
-	private BucketItemResponse toBucketItemResponse(BucketItem bucketItem) {
-		return BucketItemResponse.builder()
-			.profileId(bucketItem.getProfile().getId())
-			.nickname(bucketItem.getProfile().getNickname())
-			.bucketId(bucketItem.getId())
-			.content(bucketItem.getContent())
-			.status(bucketItem.getStatus())
-			.cheerCount(bucketItem.getCheerCount())
-			.commentCount(bucketItem.getCommentCount())
-			.createdAt(bucketItem.getCreatedAt())
-			.updatedAt(bucketItem.getUpdatedAt())
-			.build();
 	}
 }

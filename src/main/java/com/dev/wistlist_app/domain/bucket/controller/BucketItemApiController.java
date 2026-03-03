@@ -2,6 +2,8 @@ package com.dev.wistlist_app.domain.bucket.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,18 +38,19 @@ public class BucketItemApiController {
 	private final CommentService commentService;
 
 	@GetMapping
-	public ApiResponse<List<BucketItemResponse>> getAllBucketItems() {
-		return ApiResponse.success(bucketItemService.getAllBucketItems());
+	public ApiResponse<Page<BucketItemResponse>> getAllBucketItems(Pageable pageable) {
+		return ApiResponse.success(bucketItemService.getAllBucketItems(pageable));
 	}
 
 	@GetMapping("/search")
-	public ApiResponse<List<BucketItemResponse>> getAllBucketItemBySearch(@RequestParam String content) {
-		return ApiResponse.success(bucketItemService.getAllBuckItemPageBySearch(content));
+	public ApiResponse<Page<BucketItemResponse>> getAllBucketItemBySearch(@RequestParam String content,
+		Pageable pageable) {
+		return ApiResponse.success(bucketItemService.getAllBuckItemPageBySearch(content, pageable));
 	}
 
 	@GetMapping("/me")
-	public ApiResponse<List<BucketItemResponse>> getMyBucketItems(@Login Long userId) {
-		return ApiResponse.success(bucketItemService.getMyBucketItemList(userId));
+	public ApiResponse<Page<BucketItemResponse>> getMyBucketItems(@Login Long userId, Pageable pageable) {
+		return ApiResponse.success(bucketItemService.getMyBucketItemList(userId, pageable));
 	}
 
 	@GetMapping("/me/{bucketId}")

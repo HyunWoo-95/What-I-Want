@@ -1,8 +1,8 @@
 package com.dev.wistlist_app.domain.bucket.dto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.dev.wistlist_app.domain.bucket.entity.BucketItem;
 import com.dev.wistlist_app.domain.bucket.entity.BucketItemStatus;
 
 import lombok.AllArgsConstructor;
@@ -22,11 +22,21 @@ public class BucketResponseDto {
 		private Long bucketId;
 		private String content;
 		private BucketItemStatus status;
-		private LocalDate dueDate;
 		private Long cheerCount;
 		private Long commentCount;
 		private LocalDateTime createdAt;
 		private LocalDateTime updatedAt;
 
+		public BucketItemResponse(BucketItem bucketItem) {
+			this.profileId = bucketItem.getProfile().getId();
+			this.nickname = bucketItem.getProfile().getNickname();
+			this.bucketId = bucketItem.getId();
+			this.content = bucketItem.getContent();
+			this.status = bucketItem.getStatus();
+			this.cheerCount = bucketItem.getCheerCount();
+			this.commentCount = bucketItem.getCommentCount();
+			this.createdAt = bucketItem.getCreatedAt();
+			this.updatedAt = bucketItem.getUpdatedAt();
+		}
 	}
 }
