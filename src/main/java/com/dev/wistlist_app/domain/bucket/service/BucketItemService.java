@@ -2,14 +2,14 @@ package com.dev.wistlist_app.domain.bucket.service;
 
 import static com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dev.wistlist_app.domain.bucket.entity.BucketCategory;
+import com.dev.wistlist_app.domain.bucket.entity.BucketItemStatus;
 import com.dev.wistlist_app.domain.users.entity.User;
 import com.dev.wistlist_app.domain.users.entity.UserProfile;
 import com.dev.wistlist_app.domain.users.repository.UserProfileRepository;
@@ -48,14 +48,20 @@ public class BucketItemService {
 	@Transactional(readOnly = true)
 	public Page<BucketItemResponse> getAllBucketItems(Pageable pageable) {
 		Page<BucketItem> bucketItems = bucketRepo.findAll(pageable);
-
 		return bucketItems.map(BucketItemResponse::new);
 	}
+
 
 	@Transactional(readOnly = true)
 	public Page<BucketItemResponse> getAllBuckItemPageBySearch(String content, Pageable pageable) {
 		Page<BucketItem> bucketItems = bucketRepo.searchBucketItems(content, pageable);
+		return bucketItems.map(BucketItemResponse::new);
+	}
 
+	@Transactional(readOnly = true)
+	public Page<BucketItemResponse> getAllBuckItemPageByComplexSearch(BucketCategory category, String content,
+		 Pageable pageable) {
+		Page<BucketItem> bucketItems = bucketRepo.complexSearchBucketItems(category, content,  pageable);
 		return bucketItems.map(BucketItemResponse::new);
 	}
 

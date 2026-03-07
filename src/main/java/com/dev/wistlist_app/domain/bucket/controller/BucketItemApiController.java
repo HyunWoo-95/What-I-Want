@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemCreateRequest;
 import com.dev.wistlist_app.domain.bucket.dto.BucketRequestDto.BucketItemStatusRequest;
 import com.dev.wistlist_app.domain.bucket.dto.BucketResponseDto.BucketItemResponse;
+import com.dev.wistlist_app.domain.bucket.entity.BucketCategory;
+import com.dev.wistlist_app.domain.bucket.entity.BucketItemStatus;
 import com.dev.wistlist_app.domain.bucket.service.BucketItemService;
 import com.dev.wistlist_app.domain.cheer.service.CheerService;
 import com.dev.wistlist_app.domain.comment.dto.CommentRequestDto;
@@ -38,7 +41,7 @@ public class BucketItemApiController {
 	private final CommentService commentService;
 
 	@GetMapping
-	public ApiResponse<Page<BucketItemResponse>> getAllBucketItems(Pageable pageable) {
+	public ApiResponse<Slice<BucketItemResponse>> getAllBucketItems(Pageable pageable) {
 		return ApiResponse.success(bucketItemService.getAllBucketItems(pageable));
 	}
 
@@ -46,6 +49,15 @@ public class BucketItemApiController {
 	public ApiResponse<Page<BucketItemResponse>> getAllBucketItemBySearch(@RequestParam String content,
 		Pageable pageable) {
 		return ApiResponse.success(bucketItemService.getAllBuckItemPageBySearch(content, pageable));
+	}
+
+	@GetMapping("/complex/search")
+	public ApiResponse<Page<BucketItemResponse>> getAllBucketItemByComplexSearch(
+		@RequestParam(required = false) BucketCategory category,
+		@RequestParam(required = false) String content,
+		Pageable pageable) {
+		return ApiResponse.success(
+			bucketItemService.getAllBuckItemPageByComplexSearch(category, content, pageable));
 	}
 
 	@GetMapping("/me")

@@ -7,7 +7,6 @@ import java.util.List;
 import com.dev.wistlist_app.domain.BaseTimeEntity;
 import com.dev.wistlist_app.domain.cheer.entity.Cheer;
 import com.dev.wistlist_app.domain.comment.entity.Comment;
-import com.dev.wistlist_app.domain.users.entity.User;
 import com.dev.wistlist_app.domain.users.entity.UserProfile;
 
 import jakarta.persistence.Column;
@@ -18,9 +17,11 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+// @Table(name = "bucket_item", indexes = {
+// 	@Index(name = "idx_category_created_at", columnList = "category, created_at")
+// })
 public class BucketItem extends BaseTimeEntity {
 
 	@Id
